@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html ng-app="cataraqui">
+    <head>
+        <title ng-bind="pageTitle"></title>
+
+        <!-- bower:css -->
+        <!-- endinject -->
+        <!-- inject:css -->
+        <!-- endinject -->
+
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1" />
+    </head>
+    <body data-ng-controller="MainController" ng-cloak layout="column">
+        <md-content flex layout="column">
+            <div id="windowControls" class="md-primary window-controls">
+                <md-button class="md-icon-button btn-white-prominent" ng-click="minimizeApp()" md-ripple-size="partial">
+                <!--            <md-icon aria-label="Remove" class="material-icons">remove</md-icon> -->
+                    <md-icon aria-label="Minimize" md-svg-icon="/res/img/svg/ic_remove.svg"></md-icon>
+                </md-button>
+                <md-button class="md-icon-button btn-white-prominent" ng-click="maximizeApp()" md-ripple-size="partial">
+                <!-- <md-icon aria-label="Add" class="material-icons">add</md-icon> -->
+                    <md-icon aria-label="Maximize" md-svg-icon="/res/img/svg/ic_add.svg"></md-icon>
+                </md-button>
+                <md-button class="md-icon-button btn-white-prominent" ng-click="closeApp()" md-ripple-size="partial">
+                <!-- <md-icon aria-label="Close" class="material-icons">close</md-icon> -->
+                    <md-icon aria-label="Close" md-svg-icon="/res/img/svg/ic_close.svg"></md-icon>
+                </md-button>
+                <div id="draggableArea" style="">
+                </div>
+            </div>
+            <!--
+            <md-toolbar id="windowControls" class="md-primary window-controls">
+                <div class="md-toolbar-tools">
+                    <span flex></span>
+                    <md-icon aria-label="Close" class="material-icons" ng-click="closeApp()">close</md-icon>
+                </div>
+            </md-toolbar>
+            -->
+            <md-toolbar class="md-medium-tall" layout="row">
+                <div class="md-toolbar-tools">
+                    <h2>
+                        <span>TappyUSB Reader Writer</span>
+                    </h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="requestStop()" ng-show="tappyConnected" style="color:white">
+                        <md-tooltip md-direction="bottom">
+                            Send a stop command to the Tappy
+                        </md-tooltip>
+                        <md-icon aria-label="Stop Tappy" md-svg-icon="/res/img/svg/ic_stop.svg"></md-icon>
+                    </md-button>
+                    <md-button class="md-icon-button" ng-click="requestDisconnect()" ng-show="tappyConnected" style="color:white">
+                        <md-tooltip md-direction="bottom">
+                            Disconnect from the Tappy
+                        </md-tooltip>
+                        <md-icon aria-label="Disconnect tappy" md-svg-icon="/res/img/svg/ic_block.svg"></md-icon>
+                    </md-button>
+                    <md-progress-circular class='md-accent' md-mode="indeterminate" ng-show="scanActive"></md-progress-circular >
+                    <md-button id="tappyConnectionButton" class="md-icon-button" ng-click="requestRedetect()" ng-class="{'tappy-icon-searching': (!tappyConnected), 'tappy-icon-found': (tappyConnected)}">
+                        <md-tooltip md-direction="bottom">
+                            Start Tappy autodetection 
+                        </md-tooltip>
+                        <md-icon aria-label="Tappy Connected" md-svg-icon="/res/img/svg/ic_usb.svg"></md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+            <md-tabs id="mainContentTab" flex class="md-primary" layout-fill ng-cloak>
+                <md-tab flex layout="column" ng-repeat="tab in tabs" layout-fill label="{{tab.title}}">
+                    <md-content flex layout="column" layout-fill ng-include="tab.partial" ng-controller="tab.controller">
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+        </md-content>
+        <div id="statusBar">
+        </div>
+        <!-- translations:js -->
+        <!-- endinject -->
+        <!-- bower:js -->
+        <!-- endinject -->
+        <!-- utils:js -->
+        <!-- endinject -->
+        <!-- main:js -->
+        <!-- endinject -->
+        <!-- services:js -->
+        <!-- endinject -->
+        <!-- directives:js -->
+        <!-- endinject -->
+        <!-- controllers:js -->
+        <!-- endinject -->
+
+    </body>
+</html>

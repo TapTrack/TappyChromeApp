@@ -1,0 +1,60 @@
+<div layout="row" flex>
+    <div flex ng-controller="ScanType4Controller">
+        <div  layout-padding  layout="column" ng-show="cardData === null">
+            <div layout="row" layout-padding class="md-light-head">
+                Detect Type 4B
+            </div>
+            <div layout-padding class="md-subhead">
+                Certain ISO14443-4 (Type 4) NFC tags make use of an alternative type of radio 
+                modulation referred to as Type B instead of the more common Type A. 
+                
+                The detection process and resulting information for Type 4B tags is distinctly
+                different from that for Type 4A tags, so the Tappy must be explicitly told to 
+                that it is scanning for a Type 4B tag. This tool may be used to detect these 
+                unusual tags; if you are instead scanning for Type 4A, please use the standard 
+                scanning tool.
+            </div>
+        </div>
+        <div layout="row" ng-hide="cardData === null || cardData.type === 'B'">
+            <div layout-padding layout="column">
+                <div class="md-light-head md-no-sticky">
+                    Type 4A Tag Data
+                </div>
+                <label style="padding-bottom:0">UID</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="cardData.uid"></span>
+                <label style="padding-bottom:0">ATS</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="cardData.ats"></span>
+            </div>
+        </div>
+        <div layout="row" ng-hide="cardData === null || cardData.type === 'A'">
+            <div layout-padding layout="column">
+                <div class="md-light-head md-no-sticky">
+                    Type 4B Detection Result
+                </div>
+                <label style="padding-bottom:0">ATQB</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="cardData.atqb"></span>
+                <label style="padding-bottom:0">ATTRIB</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="cardData.attrib"></span>
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <div>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="clearCardData()" ng-hide="cardData === null" >Clear</md-button>
+                <!-- Type A/B switch for if the TappyUSB supports the TappyBLE style switching -->
+                <!--
+                <div style="display: inline;" class="ripple-holder-box"  md-ink-ripple="true">
+                    <md-icon class="no-border clickable color-stroke" ng-class="{'md-accent': (pollTypeA)}" ng-click="setTypeA()" md-svg-icon='/res/img/svg/ic_typea_opt.svg'></md-icon>
+                    <md-icon class="no-border clickable color-stroke"  ng-class="{'md-accent': (!pollTypeA)}" ng-click="setTypeB()" md-svg-icon='/res/img/svg/ic_typeb_opt.svg'></md-icon>
+                </div>
+                -->
+                <span>
+                    &nbsp;
+                </span>
+                <md-button class="md-raised md-primary" ng-click="scanForTags()" >Detect</md-button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<div layout="row" flex ng-controller="PlatformUploadController">
+    <div flex >
+        <div  layout-padding  layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Configure Tags for TapTrack Platform
+            </div>
+            <div layout-padding class="md-subhead">
+                This operation instruct the Tappy to write the appropriate data
+                to every tag it encounters in order to enable it to be used with the
+                TapTrack Platform. Note, you will need to log into your platform account
+                in your default browser prior to using this tool. This tool also does not
+                make sure that you performed the second step of associating the tag with your
+                account, it only write the appropriate data to the tag and launches the 
+                appropriate URL, so please make sure to complete the association in your browser.
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <div>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="requestStop()" >Stop</md-button>
+                <md-button class="md-raised md-primary" ng-click="initiateWrite()" >Start Writing</md-button>
+            </div>
+        </div>
+    </div>
+</div>

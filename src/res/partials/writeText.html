@@ -1,0 +1,28 @@
+<div layout="column" ng-controller="WriteTextController">
+    <div>
+        <div layout-padding layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Write Text 
+            </div>
+            <div layout="row" layout-padding class="md-subhead">
+                Write a single UTF-8 encoded text record to a tag.
+                When tapped by a stock Android device, the user will see
+                the text contents of this record in a built-in NDEF data
+                viewing application.
+            </div>
+        </div>
+    </div>
+    <div layout-padding>
+        <form layout-padding name="writeTextForm">
+            <div layout="row" flex>
+                <md-input-container flex class="md-block">
+                    <label>Content</label>
+                    <textarea ng-model="writeTextContent" md-select-on-focus>
+                    </textarea>
+                </md-input-container>
+            </div>
+            <div ng-include="'/res/partials/writeControl.html'">
+            </div>
+        </form>
+    </div>
+</div>

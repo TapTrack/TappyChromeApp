@@ -1,0 +1,11 @@
+<div layout="row">
+    <div ng-click="explainNdefPrefix()" class="ndefPrefixHolder" ng-hide="prefixText.length === 0" style="">
+        <div class="writeUrlPrefix" ng-bind="prefixText"></div>
+        <div class="ndefPrefixLabel md-caption" style="">
+            NDEF Prefix
+        </div>
+    </div>
+    <md-input-container flex class="url-container" >
+        <input class="writeUrlInput" type="text" placeholder="Uri" ng-keydown="urlKeydown($event)" ng-keypress="urlKeypress($event)" ng-model="contentText" ng-change="urlChange($event)"></input>
+    </md-input-container>
+</div>

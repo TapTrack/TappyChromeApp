@@ -1,0 +1,55 @@
+<div layout="row" flex>
+    <div flex ng-controller="ReadNdefController">
+        <div layout-padding layout="column" ng-show="cardData === null">
+            <div layout="row" layout-padding class="md-light-head">
+                Detect NDEF
+            </div>
+            <div layout="row" layout-padding class="md-subhead">
+                A special space-efficient format is called the NFC Data Exchange Format (NDEF)
+                is commonly used to store data on NFC tags in a manner that allows NFC
+                readers to make sense of the tag contents. If a tag has been formatted 
+                to store NDEF data in a standards-compliant fashion, this operation can be used
+                to retrieve that information, as well as some information about the tag itself.
+            </div>
+        </div>
+        <div  layout="column" ng-hide="cardData === null">
+            <div layout-padding>
+                <div layout-padding class="md-light-head">
+                    NDEF Detection Result
+                </div>
+            </div>
+            <div layout-padding layout="column">
+                <div class="md-subheader md-no-sticky">
+                    Tag data 
+                </div>
+                <div style="padding-bottom:0">UID</div>
+                <div class="md-subhead" style="padding-top: 2px" ng-bind="cardData.uid"></div>
+                <label style="padding-bottom:0">Type</label>
+                <div class="md-subhead" style="padding-top: 2px" ng-bind="cardData.description"></div>
+            </div>
+        </div>
+        <div layout="column"  ng-hide="cardData === null">
+            <md-subheader class="md-no-sticky">
+                NDEF Records
+            </md-subheader>
+            <md-list>
+                <md-list-item class="md-3-line md-long-text" ng-repeat="record in cardData.ndefRecords">
+                    <md-icon md-svg-icon="{{ getAvatarSvg(record) }}"></md-icon>
+                    <div class="md-list-item-text">
+                        <h3 ng-bind-html="describeTnf(record)"></h3>
+                        <h4 ng-bind-html="describeType(record)"></h4>
+                        <h4 ng-show="record.getId() !== null && record.getId().length > 0" ng-bind="describeId(record)"></h4>
+                        <p ng-bind-html="describePayload(record)"></p>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </div>
+        <div layout-padding layout="row">
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="clearCardData()" ng-hide="cardData === null" >Clear</md-button>
+                <md-button class="md-raised md-primary" ng-click="scanForNdef()" >Detect</md-button>
+            </div>
+        </div>
+    </div>
+</div>

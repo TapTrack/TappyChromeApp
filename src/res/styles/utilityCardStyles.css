@@ -1,0 +1,13 @@
+md-card.utility-card > md-card-title {
+}
+
+md-card.utility-card > md-card-title > div.utility-icon {
+    /* this matches the heading font height + padding */
+    height: 48px; 
+    width: auto;
+}
+
+md-card.utility-card > md-card-title > div.utility-icon > img {
+    height: 100%;
+    width: auto;
+}

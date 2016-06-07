@@ -1,0 +1,26 @@
+<div layout="row" flex ng-controller="LaunchUrlController">
+    <div flex >
+        <div  layout-padding  layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Launch URLs
+            </div>
+            <div layout-padding class="md-subhead">
+                This operation instruct the Tappy to scan for NDEF-formatted tags.
+                When an NDEF-formatted tag is found, the first record will be checked
+                to determine if it is an NDEF URL record. If the first record is a URL
+                record, the utility will then launch the URL in your default browser.
+                This operation will continue until you stop it, perform another operation,
+                or a fatal error occurs.
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <div>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="requestStop()" >Stop</md-button>
+                <md-button class="md-raised md-primary" ng-click="initiateOperation()" >Start Scanning</md-button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div id="writeUriHolder"ng-controller="WriteUriController">
+    <div>
+        <div layout-padding layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Write URI 
+            </div>
+            <div layout="row" layout-padding class="md-subhead">
+                Writes a single Uniform Resource Idenftifier (URI) record to a tag. 
+                When a person with an NFC-enabled Android device taps a tag written with
+                a URI, it will attempt to open the resource specified if it has an app installed
+                that can handle that type of resource. Most commonly this takes the form of a link
+                to a webpage that is subsequently opened in the user's browser (http:// or https://), but it can
+                also be one of many other types of URI including email addresses (mailto:), 
+                telephone numbers (tel:), sms text messagest (sms:), or even custom URIs
+                unique to certain apps.
+            </div>
+        </div>
+    </div>
+    <div layout-padding>
+        <div layout-padding flex>
+            <ndef-uri-input flex record="ndefRecord" split-initially="false"></ndef-uri-input>
+        </div>
+    </div>
+    <div layout-padding ng-include="'/res/partials/writeControl.html'">
+    </div>
+</div>

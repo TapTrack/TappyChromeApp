@@ -1,0 +1,31 @@
+<!-- TODO: change this into a directive -->
+            <div layout="row" class="write-control-row">
+                <span flex></span>
+                <md-button class="stop-control" ng-show="selectedMode.continuous" ng-click="requestStop()">Stop</md-button>
+                <md-button class="md-raised write-control" ng-class="{'md-primary': (!selectedMode.locks), 'md-warn': (selectedMode.locks)}" ng-click="initiateWrite()">
+                    <span class="write-mode-description" style="">
+                        {{ selectedMode.description }}
+                    </span>
+                    <md-menu style="">
+                        <md-button 
+                                aria-label="Open write menu" 
+                                md-no-ink class="md-icon-button" 
+                                ng-click="$mdOpenMenu($event)">
+                            <md-icon md-menu-origin md-svg-icon="/res/img/svg/ic_arrow_drop_down.svg"></md-icon>
+                        </md-button>
+                        <md-menu-content width="6">
+                            <md-menu-item ng-repeat="mode in writeModes">
+                                <md-button ng-click="writeModeSelected($index)">
+                                    {{ mode.description }}
+                                </md-button>
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                </md-button>
+            </div>
+            <div layout="row" style="text-align: right; padding: 5px" ng-show="selectedMode.locks" flex>
+                <div class="md-warn" style="text-align:right; width: 100%;">
+                    Warning: tag locking is an irreversible operation that renders the tag permanently unwritable.<br/>
+                    If you would like to know more, TapTrack has a whitepaper about <a href='http://www.taptrack.com/nfc-tag-write-protection/'>tag write protection</a>.
+                </div>
+            </div>

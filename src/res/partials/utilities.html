@@ -1,0 +1,6 @@
+<div layout="column" ng-controller="UtilitiesController">
+    <md-content flex layout="column">
+        <div layout="row" flex  ng-repeat="utility in utilities" ng-include="utility.partial">
+        </div>
+    </md-content>
+</div>

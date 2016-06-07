@@ -1,0 +1,42 @@
+{
+  "name": "cataraqui",
+  "description": "Tappy Reader Writer Chromeapp",
+  "main": "",
+  "authors": [
+    "TapTrack"
+  ],
+  "license": "Apache-2.0",
+  "moduleType": [
+    "globals"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "angular-aria": "~1.4.7",
+    "angular-messages": "~1.4.7",
+    "angular-animate": "~1.4.7",
+    "angular-material": "~1.0.8",
+    "angular-translate": "~2.8.1",
+    "roboto-fontface": "~0.4.5",
+    "angular-sanitize": "~1.5.5",
+    "vcard": "~0.2.5",
+    "jquery": "~2.2.3",
+    "ndef": "~1.0.0",
+    "tappy-classic": "~1.0.0"
+  },
+  "overrides": {
+    "angular": {
+      "dependencies": {
+        "jquery": "~2.2.3"
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+<div layout="row" flex>
+    <div flex >
+        <div  layout-padding  layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Lock Tags
+            </div>
+            <div layout-padding class="md-subhead">
+                This operation instruct the Tappy to lock every tag it encounters until
+                you either issue a stop command or another instruction. Tag locking is an
+                irreversible operation that prevents the locked memory from ever being
+                rewritten, so it is advisable to make certain that any tags you lock
+                contain the information you desire. Additionally, once you issue this
+                command, the Tappy will immediately start locking all tags it encounters,
+                so make sure there are not any tags you do not want locked in proximity to
+                the Tappy before initiating batch locking.
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <div>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="requestStop()" >Stop</md-button>
+                <md-button class="md-raised md-primary" ng-click="initiateOperation()" >Detect</md-button>
+            </div>
+        </div>
+    </div>
+</div>

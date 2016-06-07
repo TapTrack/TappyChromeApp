@@ -1,0 +1,14 @@
+<div layout="row" flex>
+    <md-sidenav class="small-nav md-whiteframe-z2" md-is-locked-open="true">
+        <md-content layout="column">
+            <md-button ng-repeat="sidetab in sidetabs" ng-click="tabSelected($index)" ng-class="{'md-accent': (selectedIdx === $index)}" class="md-icon-button">
+            <md-icon md-svg-icon="{{ sidetab.icon }}" ng-class="{'color-stroke': sidetab.colorStroke}"></md-icon>
+                <md-tooltip md-direction="right">
+                    {{ sidetab.tooltip }}
+                </md-tooltip>
+            </md-button>
+        </md-content>
+    </md-sidenav>
+    <md-content flex layout="column" ng-repeat="sidetab in sidetabs" ng-show="$index === selectedIdx" ng-include="sidetab.partial">
+    </md-content>
+</div>

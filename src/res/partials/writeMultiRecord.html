@@ -1,0 +1,73 @@
+<div layout="column" flex ng-controller="WriteMultiRecordNdefController" style="position:relative">
+    <div>
+        <div layout-padding layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Write Multi-record NDEF Message 
+            </div>
+            <div layout="row" layout-padding class="md-subhead">
+                While the other write operations in this application write a message containing
+                only a single record to the tag, the NFC Data Exchange Format (NDEF) 
+                puts no limit on the number of records a message can contain. Using this
+                tool, you may compose a custom NDEF message containing however many text
+                and URI records you require in whatever order you choose. 
+                Note that the default Android NDEF tag detection system uses only the first
+                record to determine what app to dispatch the message to. Therefore, if the first
+                record on the tag is a URL, the user's browser will open and the rest of the contents
+                will be ignored.
+            </div>
+        </div>
+    </div>
+    <div layout-padding>
+        <div layout-padding layout="row" ng-show="ndefRecords.length === 0">
+            <div layout-padding class="italic">
+                Please add a record or import an NDEF Message from an existing tag
+            </div>
+        </div>
+    </div>
+    <div>
+        <div layout="row">
+            <md-list flex>
+                <ndef-record-editor flex ng-repeat="record in ndefRecords track by deltaTrack($index,record)" record-index="$index" record-service="recordService"></ndef-record-editor>
+            </md-list>
+        </div>
+        <div layout="row" >
+            <md-menu>
+                <md-button ng-click="$mdOpenMenu($event)" class="md-primary">
+                    Add
+                </md-button>
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-button aria-label="Text record" ng-click="addText()">
+                            <md-icon md-svg-src="/res/img/svg/ic_description.svg" aria-label="Add text record">
+                            </md-icon>
+                            Add text record
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button aria-label="Uri record" ng-click="addUri()">
+                            <md-icon md-svg-src="/res/img/svg/ic_link.svg" aria-label="Add Uri record">
+                            </md-icon>
+                            Add URI record
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+            <div style="padding: 8px 0;">
+                <md-button ng-click="importRecords()">
+                    Import 
+                    <md-tooltip>
+                        Read records from a tag for editing
+                    </md-tooltip>
+                </md-button>
+            </div>
+            <div style="padding: 8px 0;">
+                <md-button ng-show="ndefRecords.length !== 0" ng-click="clearRecords()">
+                    Clear 
+                </md-button>
+            </div>
+            <span flex></span>
+            <div layout-padding style="padding-top:0px;" ng-show="ndefRecords.length !== 0" ng-include="'/res/partials/writeControl.html'">
+            </div>
+        </div>
+    </div>
+</div>

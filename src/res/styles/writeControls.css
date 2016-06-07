@@ -1,0 +1,25 @@
+.write-control-row > button.stop-control {
+    position:relative; 
+    top:1px; 
+}
+
+.write-control-row > button.write-control > span.write-mode-description {
+    margin-left: 8px; 
+    position:relative; 
+    top: 2px;
+}
+
+.write-control-row > button.write-control > md-menu {
+    padding: 0px;
+}
+
+.write-control-row > button.write-control > md-menu > button {
+    color:white;
+	padding: 0px;
+	margin: 0px;
+    height: 24px;
+	width: 24px;
+    min-width:24px;
+	min-height: 24px;
+	line-height: 24px;
+}

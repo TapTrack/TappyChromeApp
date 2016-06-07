@@ -1,0 +1,17 @@
+<md-icon md-svg-icon="/res/img/svg/ic_link.svg">
+</md-icon>
+<div flex layout="row">
+    <ndef-url-input record="ndefRecord" flex></ndef-url-input>
+    <md-menu>
+        <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)" style="margin-top:1em">
+            <md-icon md-svg-icon="/res/img/svg/ic_more_vert.svg"></md-icon>
+        </md-button>
+        <md-menu-content>
+            <md-menu-item ng-repeat="contentMenuAction in contentMenuActions">
+                <md-button ng-click="contentMenuAction.action()">
+                    {{ contentMenuAction.description }}
+                </md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+</div>

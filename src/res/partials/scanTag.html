@@ -1,0 +1,38 @@
+<div layout="row" flex>
+    <div flex ng-controller="ScanTagController">
+        <div layout-padding layout="column" ng-show="cardData === null">
+            <div layout="row" layout-padding class="md-light-head">
+                Detect Tag
+            </div>
+            <div layout="row" layout-padding class="md-subhead">
+                Most NFC tags are identified by a 4-, 7-, or 10-byte unique serial number (UID). The tag
+                will also return additional information during the detection procedure that can be
+                used to identify what type of tag it is. However, there are collisions between 
+                certain types of tags, in which case the Tappy will report either a generic type
+                or attempt to heuristically determine the tag technology, depending on configuration.
+                If the Tappy reports that a tag is a 'generic' type, this means that the heuristics were
+                unable to determine the specific tag technology to a sufficient level of confidence.
+                Additionally, for security reasons, some advanced tags can be configured to report 
+                a dynamic UID, in which case the UID detected will change with every scan.
+            </div>
+        </div>
+        <div layout="row" ng-hide="cardData === null">
+            <div layout-padding layout="column">
+                <div class="md-light-head md-no-sticky">
+                    Tag Detection Result
+                </div>
+                <label style="padding-bottom:0">UID</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="cardData.uid"></span>
+                <label style="padding-bottom:0">Type</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="cardData.description"></span>
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="clearCardData()" ng-hide="cardData === null">Clear</md-button>
+                <md-button class="md-raised md-primary" ng-click="scanForTags()" >Detect</md-button>
+            </div>
+        </div>
+    </div>
+</div>
