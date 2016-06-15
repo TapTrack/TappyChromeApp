@@ -74,7 +74,7 @@ app.controller('ReadNdefController',
         }
         else {
             StatusBarService.setStatus("Waiting for tap...");
-            tappy.readNdef(0,function(tagType,tagCode, ndefMessage) {
+            tappy.detectNdef(false,function(tagType,tagCode, ndefMessage) {
                 StatusBarService.setTransientStatus("Tag read");
                 $scope.$evalAsync(function(){
                     $scope.cardData = new CardData(
@@ -82,11 +82,11 @@ app.controller('ReadNdefController',
                         TappyClassic.Utils.resolveTagTypeDescription(tagType),
                         ndefMessage.getRecords());
                 });
-            },function(errorType, data) {
+            },function(err) {
                 $scope.$evalAsync(function(){
                     $scope.clearCardData();
                 });
-                ErrorDialogService.tappyErrorResponseCb(errorType,data);
+                ErrorDialogService.shimErrorResponseCb(err);
             });
         }
     };

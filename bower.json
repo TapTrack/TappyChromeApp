@@ -30,7 +30,12 @@
     "vcard": "~0.2.5",
     "jquery": "~2.2.3",
     "ndef": "~1.0.0",
-    "tappy-classic": "~1.0.0"
+    "tappy-classic": "~1.0.1",
+    "tappy-tcmp": "~1.0.0",
+    "tappy-chromeserialcommunicator": "~1.0.0",
+    "tappy-tcmpchromeserialautodetector": "~1.0.0",
+    "tappy-systemfamily": "~1.0.0",
+    "tappy-basicnfcfamily": "~1.0.0"
   },
   "overrides": {
     "angular": {
@@ -38,5 +43,8 @@
         "jquery": "~2.2.3"
       }
     }
+  },
+  "resolutions": {
+    "angular": "1.5.7"
   }
 }

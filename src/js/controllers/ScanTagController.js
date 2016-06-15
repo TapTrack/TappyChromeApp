@@ -19,18 +19,18 @@ app.controller('ScanTagController',
         }
         else {
             StatusBarService.setStatus("Waiting for tap...");
-            tappy.readTagUid(0,true,function(tagType,tagCode) {
+            tappy.detectTag(false,function(tagType,tagCode) {
                 StatusBarService.setTransientStatus("Tag read");
                 $scope.$evalAsync(function(){
                     $scope.cardData = new CardData(
                         StringUtils.uint8ArrayToHexString(tagCode),
                         TappyClassic.Utils.resolveTagTypeDescription(tagType));
                 });
-            },function(errorType, data) {
+            },function(err) {
                 $scope.$evalAsync(function(){
                     $scope.clearCardData();
                 });
-                ErrorDialogService.tappyErrorResponseCb(errorType,data);
+                ErrorDialogService.shimErrorResponseCb(err);
             });
         }
     };

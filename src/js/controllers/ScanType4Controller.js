@@ -44,18 +44,18 @@ app.controller('ScanType4Controller',
 
     var scanType4B = function(tappy) {
             StatusBarService.setStatus("Waiting for tap...");
-            tappy.scanType4B(0,function(atqb,attrib) {
+            tappy.detectType4B(false,function(atqb,attrib) {
                 StatusBarService.setTransientStatus("Tag read");
                 $scope.$evalAsync(function(){
                     $scope.cardData = new CardDataB(
                         noneRepl(StringUtils.uint8ArrayToHexString(atqb)),
                         noneRepl(StringUtils.uint8ArrayToHexString(attrib)));
                 });
-            },function(errorType, data) {
+            },function(err) {
                 $scope.$evalAsync(function(){
                     $scope.clearCardData();
                 });
-                ErrorDialogService.tappyErrorResponseCb(errorType,data);
+                ErrorDialogService.shimErorrResponseCb(err);
             });
     };
 

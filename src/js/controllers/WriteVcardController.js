@@ -9,30 +9,15 @@ app.controller('WriteVcardController',['$rootScope','$scope', 'ErrorDialogServic
         $scope.selectedMode = $scope.writeModes[idx];
     };
     
-    var repeatTimeout = null;
-
-    var repeat = function() {
-        if(repeatTimeout !== null) {
-            clearTimeout(repeatTimeout);
-        }
-        
-        repeatTimeout = setTimeout(function () {
-            $scope.sendWrite();
-        },600);
-    };
-
     $scope.requestStop = function() {
         var tappy = TappyService.getTappy();
-        if(repeatTimeout !== null) {
-            clearTimeout(repeatTimeout);
-        }
 
         if(tappy === null || !tappy.isConnected()) {
             ErrorDialogService.noConnection();
         }
         else {
             StatusBarService.setTransientStatus("Sending stop command");
-            tappy.sendStop();
+            tappy.stop();
         }
     };
 
@@ -74,41 +59,25 @@ app.controller('WriteVcardController',['$rootScope','$scope', 'ErrorDialogServic
             if(typeof $scope.writeTextContent !== "undefined") {
                 content = $scope.writeTextContent.trim();
             }
-            StatusBarService.setStatus("Transferring content...");
+            StatusBarService.setStatus("Waiting for tap...");
             var vcardTrimmed = trimVcard($scope.vcard);
             if(vcardTrimmed.url == "http://") {
                 vcardTrimmed.url = "";
             }
 
-            tappy.addVcardContent(
-                vcardSlot,
+            var toaster = WriteMessageToasterService
+                .createToaster(
+                    $scope.selectedMode.locks,
+                    $scope.selectedMode.continuous); 
+            tappy.writeVcard(
                 vcardTrimmed,
-                function(){},
-                ErrorDialogService.tappyErrorResponseCb,
+                $scope.selectedMode.locks,
+                $scope.selectedMode.continuous,
                 function() {
-                    console.log("Initiating write content");
-                    StatusBarService.setStatus("Waiting for tap...");
-                    var toaster = WriteMessageToasterService
-                        .createToaster(
-                            $scope.selectedMode.locks,
-                            $scope.selectedMode.continuous); 
-                    tappy.writeContentToTag(vcardSlot,$scope.selectedMode.locks,function(frame) {
                         writeCount++;
-                        console.log("Tag text written");
                         toaster(writeCount);
-                        console.log(frame);
-                        if($scope.selectedMode.continuous) {
-                            repeat();
-                        }
-                        else {
-                            tappy.sendStop();
-                        }
-                    },function(error,data) {
-                        ErrorDialogService.tappyErrorResponseCb(error,data);
-                        tappy.sendStop();
-                    },function() {
-                    });
-                });
+                        StatusBarService.setTransientStatus("Tag Written");
+                },ErrorDialogService.shimErrorResponseCb);
         }
     };
 }]);

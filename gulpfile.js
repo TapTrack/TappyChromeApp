@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var addsrc= require('gulp-add-src');
 var cleancss = require('gulp-clean-css');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
@@ -11,11 +12,12 @@ var runSequence = require('run-sequence');
 var gulpInject = require('gulp-inject');
 var rename = require('gulp-rename');
 var gulpFilter = require('gulp-filter');
-var flatten = require('gulp-flatten');
 var angularFilesort = require('gulp-angular-filesort');
 var zip = require('gulp-zip');
 var sort = require('gulp-sort');
 var babel = require('gulp-babel');
+var merge = require('gulp-merge-json');
+var insert = require('gulp-insert');
 
 var releaseDir = "build/release";
 var releaseOutDir = releaseDir+"/";
@@ -36,7 +38,8 @@ var srcPaths = {
     pages: 'src/pages/*.html',
     styles: 'src/res/styles/**/*.css',
     manifest: 'src/manifest.json',
-    backgroundJs: 'src/background.js'
+    backgroundJs: 'src/background.js',
+    cfgFolder: 'cfg'
 };
 
 var outPaths = {
@@ -56,6 +59,7 @@ var outPaths = {
     appPartials: "res/partials",
     appTempPages: "temppages",
     appPages: "pages",
+    appCfg: "cfg",
     appManifest: "",
     appBackground: ""
 };
@@ -81,6 +85,14 @@ function getOutDir() {
     }
     else {
         return debugOutDir;
+    }
+}
+
+function getCfgFilename() {
+    if(argv.variant !== undefined) {
+        return srcPaths.cfgFolder+"/"+argv.variant+"Cfg.json";
+    } else {
+        return null;
     }
 }
 
@@ -178,8 +190,12 @@ gulp.task('link-pages',function() {
     var cssDir = opath+outPaths.appStyles+"/**/*.css";
     var translationDir = opath+outPaths.appTranslations+"/**/*.js";
     var serviceDir = opath+outPaths.appServices+"/**/*.js";
+    var cfgDir = opath+outPaths.appCfg+"/**/*.js";
     
     return gulp.src(linkingTargets)
+    .pipe(
+            gulpInject(
+                gulp.src(cfgDir,{read:false}),{"name":"cfg","relative":true}))
     .pipe(
         gulpInject(
             gulp.src(directiveDir,{read:false}),{"name":"directives","relative":true}))
@@ -225,12 +241,28 @@ gulp.task('link-pages',function() {
 });
 
 
-gulp.task('compile',['compile-js','compile-html','compile-css','compile-img','compile-bower','compile-translations','compile-manifest']);
+gulp.task('compile',['compile-cfg','compile-js','compile-html','compile-css','compile-img','compile-bower','compile-translations','compile-manifest']);
 
 gulp.task('compile-js',['compile-controllers','compile-services','compile-utils','compile-mainjs','compile-background','compile-directives']);
 gulp.task('compile-html',['compile-partials','compile-pages']);
 gulp.task('compile-css',['compile-styles']);
 gulp.task('compile-img',['compile-svg', 'compile-png']);
+
+gulp.task('compile-cfg',function() {
+    var cfg = getCfgFilename();
+    var linkedOutput = getOutDir()+outPaths.appPages;
+    var linkingTargets = getOutDir()+outPaths.appTempPages+"/*.html";
+    var pipe = gulp.src(srcPaths.cfgFolder+"/mainCfg.json");
+    if(cfg !== null) {
+        pipe = pipe.pipe(addsrc(cfg))
+                .pipe(merge("cfg.json"));
+    }
+
+    return pipe
+        .pipe(insert.wrap("var BuildConfig = ",";"))
+        .pipe(rename("cfg.js"))
+        .pipe(gulp.dest(getOutDir()+outPaths.appCfg));
+});
 
 gulp.task('compile-translations', function() {
     if(isRelease()) {

@@ -1,5 +1,5 @@
-app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogService','StatusBarService','TappyService','$controller',
-        function($rootScope,$scope,$mdDialog,ErrorDialogService,StatusBarService,TappyService,$controller) {
+app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogService','StatusBarService','TappyService','$controller','TappyCapabilityService',
+        function($rootScope,$scope,$mdDialog,ErrorDialogService,StatusBarService,TappyService,$controller,TappyCapabilityService) {
     $scope.scanActive = false;
     $scope.tappyConnected = false;
 
@@ -12,12 +12,12 @@ app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogS
         }
     };
 
-    $scope.tabs = [
-        {title: 'Detect', partial:'/res/partials/rwcontent.html', controller: getController('ReadController')},
-        {title: 'Write', partial:'/res/partials/rwcontent.html', controller: getController('WriteController')},
-        {title: 'Utilities', partial:'/res/partials/rwcontent.html', controller: getController('BarredUtilityController')},
-    ];
-    
+
+    var tabs = TappyCapabilityService.getMainCategories($scope,$controller);
+    for(var i = 0; i < tabs.length; i++) {
+        tabs[i].controller = getController(tabs[i].controllerName);
+    }
+    $scope.tabs = tabs;
     $scope.requestStop = function() {
         var tappy = TappyService.getTappy();
 
@@ -26,7 +26,7 @@ app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogS
         }
         else {
             StatusBarService.setTransientStatus("Sending stop command");
-            tappy.sendStop();
+            tappy.stop();
         }
     };
 
@@ -64,12 +64,17 @@ app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogS
         return TappyService.isConnected();
     },function (newVal, oldVal, scope) {
         scope.tappyConnected = TappyService.isConnected();
+        $scope.tappyConnected = scope.tappyConnected;
+        console.log(TappyService.isConnected());
     });
     
     $scope.$watch(function() {
         return TappyService.isScanning();
     },function (newVal, oldVal, scope) {
         scope.scanActive = TappyService.isScanning();
+        $rootScope.scanActive = scope.scanActive;
+        $scope.scanActive = scope.scanActive;
+        console.log(TappyService.isScanning());
     });
 
     TappyService.startScan();

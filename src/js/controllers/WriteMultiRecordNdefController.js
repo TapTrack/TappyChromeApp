@@ -70,30 +70,15 @@ app.controller('WriteMultiRecordNdefController',
         $scope.selectedMode = $scope.writeModes[idx];
     };
 
-    var repeatTimeout = null;
-
-    var repeat = function() {
-        if(repeatTimeout !== null) {
-            clearTimeout(repeatTimeout);
-        }
-        
-        repeatTimeout = setTimeout(function () {
-            $scope.sendWrite();
-        },500);
-    };
-
     $scope.requestStop = function() {
         var tappy = TappyService.getTappy();
-        if(repeatTimeout !== null) {
-            clearTimeout(repeatTimeout);
-        }
 
         if(tappy === null || !tappy.isConnected()) {
             ErrorDialogService.noConnection();
         }
         else {
             StatusBarService.setTransientStatus("Sending stop command");
-            tappy.sendStop();
+            tappy.stop();
         }
     };
 
@@ -110,9 +95,6 @@ app.controller('WriteMultiRecordNdefController',
             ErrorDialogService.noConnection();
         }
         else {
-            if(repeatTimeout !== null) {
-                clearTimeout(repeatTimeout);
-            }
             var records = $scope.recordService.getRecords();
             if(records.length === 0) {
                 $mdDialog.show($mdDialog.alert()
@@ -128,21 +110,12 @@ app.controller('WriteMultiRecordNdefController',
                     .createToaster(
                         $scope.selectedMode.locks,
                         $scope.selectedMode.continuous); 
-                tappy.writeCustomNdef(0x00,$scope.selectedMode.locks,ndefMessage.toByteArray(),
+                tappy.writeCustomNdef(ndefMessage.toByteArray(),$scope.selectedMode.locks,$scope.selectedMode.continuous,
                         function() {
                             writeCount++;
                             toaster(writeCount);
-                            if($scope.selectedMode.continuous) {
-                                repeat();
-                            }
-                            else {
-                                tappy.sendStop();
-                            }
                         },
-                        function(errorType,data) {
-                            ErrorDialogService.tappyErrorResponseCb(errorType,data);
-                            tappy.sendStop();
-                        });
+                        ErrorDialogService.shimErrorResponseCb);
             }
 
         }
@@ -154,19 +127,13 @@ app.controller('WriteMultiRecordNdefController',
             ErrorDialogService.noConnection();
         }
         else {
-            if(repeatTimeout !== null) {
-                clearTimeout(repeatTimeout);
-            }
-            
             StatusBarService.setStatus("Waiting for tap...");
-            tappy.readNdef(0,function(tagType,tagCode, ndefMessage) {
+            tappy.detectNdef(false,function(tagType,tagCode, ndefMessage) {
                 StatusBarService.setTransientStatus("Tag read");
                 $scope.$evalAsync(function(){
                     $scope.recordService.replaceAllRecords(ndefMessage.getRecords());
                 });
-            },function(errorType, data) {
-                ErrorDialogService.tappyErrorResponseCb(errorType,data);
-            });
+            },ErrorDialogService.shimErrorResponseCb);
         }
     };
 

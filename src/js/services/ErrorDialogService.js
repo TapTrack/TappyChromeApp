@@ -18,6 +18,17 @@ app.service('ErrorDialogService',['$mdDialog','StatusBarService',function($mdDia
         }
     };
 
+    this.shimErrorResponseCb = function(err) { 
+        $mdDialog.show(
+            $mdDialog.alert()
+                .clickOutsideToClose(true)
+                .title("Tappy Error")
+                .textContent(err.message)
+                .ok('Ok')
+        );
+        StatusBarService.setTransientStatus(err.message);
+    };
+
     this.tappyErrorResponseCb = function (errorType,data) {
         var errorMessage;
         if(errorType === TappyClassic.ErrorTypes.LCS) {
