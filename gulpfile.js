@@ -103,9 +103,7 @@ function isRelease() {
         return false;
 }
 
-gulp.task('default',['build'],function() {
-
-});
+gulp.task('default',['build','watch']);
 
 gulp.task('package',['build'],function() {
     var archiveName = "cataraqui-";

@@ -1,13 +1,10 @@
-app.factory('TappyCapabilityService',[function() {
+app.factory('TappyCapabilityService',['TappyService',function(TappyService) {
     
-    var returnTopLevel = function(scope,controller) {
-        var topLevel = [
-            {title: 'Detect', partial:'/res/partials/rwcontent.html', controllerName: 'ReadController'},
-            {title: 'Write', partial:'/res/partials/rwcontent.html', controllerName: 'WriteController'},
-            {title: 'Utilities', partial:'/res/partials/rwcontent.html', controllerName: 'BarredUtilityController'},
-        ];
-        return topLevel;
-    };
+    var topLevel = [
+        {title: 'Detect', partial:'/res/partials/rwcontent.html', controllerName: 'ReadController'},
+        {title: 'Write', partial:'/res/partials/rwcontent.html', controllerName: 'WriteController'},
+        {title: 'Utilities', partial:'/res/partials/rwcontent.html', controllerName: 'BarredUtilityController'},
+    ];
 
     var SideTab = function(icon, tooltip, partial, colorStroke) {
         this.icon = icon;
@@ -28,16 +25,11 @@ app.factory('TappyCapabilityService',[function() {
     tcUtilityTabs.push(new SideTab('/res/img/svg/ic_open_in_browser.svg','Launch URLs','/res/partials/openUrlUtilityItem.html',false));
     tcUtilityTabs.push(new SideTab('/res/img/svg/ic_cloud_upload.svg','Configure for TapTrack Platform','/res/partials/platformUploadUtilityItem.html',false));
     
-    var clWriteTabs = [];
-    clWriteTabs.push(new SideTab('/res/img/svg/ic_link.svg','Single URI record','/res/partials/writeUri.html',false));
-    clWriteTabs.push(new SideTab('/res/img/svg/ic_description.svg','Single text record','/res/partials/writeText.html',false));
-    clWriteTabs.push(new SideTab('/res/img/svg/ic_person.svg','Single vCard record','/res/partials/writeVcard.html',false));
-    clWriteTabs.push(new SideTab('/res/img/svg/ic_list.svg','Multi-record message','/res/partials/writeMultiRecord.html',false));
-    
-    var tcWriteTabs = [];
-    tcWriteTabs.push(new SideTab('/res/img/svg/ic_link.svg','Single URI record','/res/partials/writeUri.html',false));
-    tcWriteTabs.push(new SideTab('/res/img/svg/ic_description.svg','Single text record','/res/partials/writeText.html',false));
-    tcWriteTabs.push(new SideTab('/res/img/svg/ic_list.svg','Multi-record message','/res/partials/writeMultiRecord.html',false));
+    var writeTabs = [];
+    writeTabs.push(new SideTab('/res/img/svg/ic_link.svg','Single URI record','/res/partials/writeUri.html',false));
+    writeTabs.push(new SideTab('/res/img/svg/ic_description.svg','Single text record','/res/partials/writeText.html',false));
+    writeTabs.push(new SideTab('/res/img/svg/ic_person.svg','Single vCard record','/res/partials/writeVcard.html',false));
+    writeTabs.push(new SideTab('/res/img/svg/ic_list.svg','Multi-record message','/res/partials/writeMultiRecord.html',false));
     
     var clDetectTabs = [];
     clDetectTabs.push(new SideTab('/res/img/svg/ic_nmark_optimised.svg','Read NDEF tag','/res/partials/readNdef.html',false));
@@ -49,26 +41,36 @@ app.factory('TappyCapabilityService',[function() {
     tcDetectTabs.push(new SideTab('/res/img/svg/ic_nfc.svg','Detect tag','/res/partials/scanTag.html',false));
     
     return {
-        getMainCategories: returnTopLevel,
-        getUtilityTabs: function() {
-            if(BuildConfig.tappyType === "tcmp") {
-                return tcUtilityTabs;
+        getMainCategories: function() {
+            if(TappyService.getTappyType() === "none") {
+                return [];
             } else {
+                return topLevel;
+            }
+        },
+        getUtilityTabs: function() {
+           if(TappyService.getTappyType() === "tcmp") {
+                return tcUtilityTabs;
+            } else if(TappyService.getTappyType()  === "classic") {
                 return clUtilityTabs;
+            } else {
+                return [];
             }
         },
         getWriteTabs: function() {
-            if(BuildConfig.tappyType === "tcmp") {
-                return tcWriteTabs;
+            if(TappyService.getTappyType() === "none") {
+                return [];
             } else {
-                return clWriteTabs;
+                return writeTabs;
             }
         },
         getDetectTabs: function() {
-            if(BuildConfig.tappyType === "tcmp") {
+            if(TappyService.getTappyType() === "tcmp") {
                 return tcDetectTabs;
-            } else {
+            } else if(TappyService.getTappyType()  === "classic") {
                 return clDetectTabs;
+            } else {
+                return [];
             }
         }
     };

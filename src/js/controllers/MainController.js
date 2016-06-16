@@ -1,5 +1,5 @@
-app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogService','StatusBarService','TappyService','$controller','TappyCapabilityService',
-        function($rootScope,$scope,$mdDialog,ErrorDialogService,StatusBarService,TappyService,$controller,TappyCapabilityService) {
+app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogService','StatusBarService','TappyService','$controller','TappyCapabilityService','$timeout',
+        function($rootScope,$scope,$mdDialog,ErrorDialogService,StatusBarService,TappyService,$controller,TappyCapabilityService,$timeout) {
     $scope.scanActive = false;
     $scope.tappyConnected = false;
 
@@ -12,12 +12,37 @@ app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogS
         }
     };
 
+    var debounceTime = 0;
+    var updateTimeout = null;
+    $scope.$watch(function() {
+        return TappyCapabilityService.getMainCategories();
+    },function (newVal, oldVal, scope) {
+        var tabs = newVal;
+        if(typeof $scope.tabs !== "undefined" &&
+                $scope.tabs !== null &&
+                $scope.tabs.length > tabs.length) {
+            if(updateTimeout !== null) {
+                $timeout.cancel(updateTimeout);
+                updateTimeout = null;
+            }
+            updateTimeout = $timeout(function() {
+                for(var i = 0; i < tabs.length; i++) {
+                    tabs[i].controller = getController(tabs[i].controllerName);
+                }
+                $scope.tabs = tabs;
+            },debounceTime);
+        } else {
+            if(updateTimeout !== null) {
+                $timeout.cancel(updateTimeout);
+                updateTimeout = null;
+            }
+            for(var i = 0; i < tabs.length; i++) {
+                tabs[i].controller = getController(tabs[i].controllerName);
+            }
+            $scope.tabs = tabs;
+        }
+    },true);
 
-    var tabs = TappyCapabilityService.getMainCategories($scope,$controller);
-    for(var i = 0; i < tabs.length; i++) {
-        tabs[i].controller = getController(tabs[i].controllerName);
-    }
-    $scope.tabs = tabs;
     $scope.requestStop = function() {
         var tappy = TappyService.getTappy();
 
@@ -31,10 +56,12 @@ app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogS
     };
 
     $scope.requestRedetect = function() {
+        debounceTime = 500;
         TappyService.startScan();        
     };
 
     $scope.requestDisconnect = function() {
+        debounceTime = 0;
         TappyService.disconnectTappy();
     };
     
@@ -65,7 +92,6 @@ app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogS
     },function (newVal, oldVal, scope) {
         scope.tappyConnected = TappyService.isConnected();
         $scope.tappyConnected = scope.tappyConnected;
-        console.log(TappyService.isConnected());
     });
     
     $scope.$watch(function() {
@@ -74,8 +100,8 @@ app.controller("MainController",['$rootScope','$scope','$mdDialog','ErrorDialogS
         scope.scanActive = TappyService.isScanning();
         $rootScope.scanActive = scope.scanActive;
         $scope.scanActive = scope.scanActive;
-        console.log(TappyService.isScanning());
     });
+    
 
     TappyService.startScan();
 }]);

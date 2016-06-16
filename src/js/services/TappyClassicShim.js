@@ -47,6 +47,16 @@ app.factory('TappyClassicShim',[function() {
     };
     
     ClassicShim.prototype = {
+        disconnect: function(cb) {
+            var self = this;
+            self.tappy.disconnectAsap();
+            // not exactly correct, but i don't think
+            // this cb is used anywhere
+            if(typeof cb === "function") {
+                cb(); 
+            }
+        },
+
         isConnected: function() {
             var self = this;
             return self.tappy.isConnected();

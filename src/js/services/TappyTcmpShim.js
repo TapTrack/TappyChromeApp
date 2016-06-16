@@ -151,6 +151,11 @@ app.factory('TappyTcmpShim',[function() {
     };
 
     TcmpShim.prototype = {
+        disconnect: function(cb) {
+            var self = this;
+            self.tappy.disconnect();
+        },
+
         executeDelayed: function(func) {
             var self = this;
             if(self.delayTimeout !== null) {
@@ -306,16 +311,137 @@ app.factory('TappyTcmpShim',[function() {
             },failCb);
             self.sendMsg(msg,successCb,failCb);
         },
-
-        writeVcard: function(vCard,lock,continuous,success,fail) {
+/*
+        Tappy.TappyVcard = function() {
+            this.name = "";
+            this.cellPhone = "";
+            this.workPhone = "";
+            this.homePhone = "";
+            this.personalEmail = "";
+            this.businessEmail = "";
+            this.homeAddress = "";
+            this.workAddress = "";
+            this.company = "";
+            this.title = "";
+            this.url = "";
+        };
+*/
+        writeVcard: function(vcard,lock,continuous,success,fail) {
             var self = this;
             self.clearCallbacks();
             lock = lock || false;
             continuous = continuous || false;
             success = success || function(){};
             fail = fail || function(){};
+            
+            var emptyVcard = new TappyClassic.TappyVcard();
+            var finalVcard = vcard || {};
+            for (var opt in emptyVcard) {
+                if (emptyVcard.hasOwnProperty(opt) && !finalVcard.hasOwnProperty(opt)) {
+                    finalVcard[opt] = emptyVcard[opt];
+                }
+            }
+            
+            var card = {};
 
-            fail(new StandardErrorMessage("This Tappy does not support this operation",true)); 
+            if(finalVcard.name.length > 0) {
+                card.n = [
+                    {
+                        value: finalVcard.name
+                    }
+                ];
+            }
+            if(finalVcard.company.length > 0) {
+                card.org = [
+                    {
+                        value: finalVcard.company
+                    }
+                ];
+            }
+            if(finalVcard.cellPhone.length > 0 || 
+                    finalVcard.homePhone.length > 0 ||
+                    finalVcard.workPhone.length > 0) {
+                card.tel = [];
+                if(finalVcard.cellPhone.length > 0) {
+                    card.tel.push({
+                        value: finalVcard.cellPhone,
+                        meta: {type: 'CELL'}
+                    });
+                }
+
+                if(finalVcard.homePhone.length > 0) {
+                    card.tel.push({
+                        value: finalVcard.homePhone,
+                        meta: {type: 'HOME'}
+                    });
+                }
+
+                if(finalVcard.workPhone.length > 0) {
+                    card.tel.push({
+                        value: finalVcard.workPhone,
+                        meta: {type: 'WORK'}
+                    });
+                }
+            }
+
+            if(finalVcard.personalEmail.length > 0 || 
+                    finalVcard.businessEmail.length > 0) {
+
+                card.email = [];
+                if(finalVcard.personalEmail.length > 0) {
+                    card.email.push({
+                        value: finalVcard.personalEmail,
+                        meta: {type: 'HOME'}
+                    });
+                }
+                
+                if(finalVcard.businessEmail.length > 0) {
+                    card.email.push({
+                        value: finalVcard.businessEmail,
+                        meta: {type: 'WORK'}
+                    });
+                }
+            }
+            
+            if(finalVcard.homeAddress.length > 0 || 
+                    finalVcard.workAddress.length > 0) {
+
+                card.adr = [];
+                if(finalVcard.homeAddress.length > 0) {
+                    card.adr.push({
+                        value: finalVcard.homeAddress,
+                        meta: {type: 'HOME'}
+                    });
+                }
+                
+                if(finalVcard.workAddress.length > 0) {
+                    card.adr.push({
+                        value: finalVcard.workAddress,
+                        meta: {type: 'WORK'}
+                    });
+                }
+            }
+
+            if(finalVcard.url.length > 0) {
+                card.url = [{
+                    value: finalVcard.url
+                }];
+            }
+            
+            if(finalVcard.title.length > 0) {
+                card.title = [{
+                    value: finalVcard.title
+                }];
+            }
+
+            var stringVcard = vCard.generate(card);
+            var vcardBytes = StringUtils.stringToUint8Array(stringVcard);
+            var typeBytes = StringUtils.stringToUint8Array("text/x-vcard");
+            var record = new Ndef.Record(false,Ndef.Record.TNF_MEDIA,typeBytes,null,vcardBytes);
+            var msg = new Ndef.Message([record]);
+            var msgBytes = msg.toByteArray();
+
+            self.writeCustomNdef(msgBytes,lock,continuous,success,fail);
         },
 
         writeCustomNdef: function(ndef,lock,continuous,success,fail) {

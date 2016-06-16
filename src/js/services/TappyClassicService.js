@@ -39,7 +39,7 @@ app.factory('TappyClassicService',['$rootScope','ErrorDialogService','StatusBarS
             scanActive = isScanning;
             if(!isScanning && tappy === null) {
                 StatusBarService.setStatus("No tappy found");
-                ErrorDialogService.noConnection();
+                //ErrorDialogService.noConnection();
             }
         });
     });

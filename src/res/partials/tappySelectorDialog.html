@@ -1,0 +1,28 @@
+<md-dialog aria-label="Tappy selection dialog" ng-cloak layout-padding>
+    <md-dialog-content >
+        <div layout-padding>
+            <h2>Multiple Tappies Detected</h2>
+            <p >
+                Multiple Tappy devices have been detected attached to your computer, please
+                select the one you wish to use.
+            </p>
+        </div>
+        <md-list>
+            <md-list-item class="md-2-line" ng-click="tappySelected(deviceOption)" ng-repeat="deviceOption in deviceOptions | orderBy: 'path' track by deviceOption.path">
+            <md-icon ng-if="deviceOption.isTcmp" class="md-avatar-icon" md-svg-icon="/res/img/svg/ic_tappy.svg" ></md-icon>
+                <md-icon ng-if="!deviceOption.isTcmp" class="md-avatar-icon" md-svg-icon="/res/img/svg/ic_usb.svg" ></md-icon>
+                <div class="md-list-item-text">
+                    <h3 ng-show="deviceOption.isTcmp">TappyUSB Standard</h3>
+                    <h3 ng-hide="deviceOption.isTcmp">TappyUSB Classic</h3>
+                    <p>{{ deviceOption.path }} </p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button class="md-primary" ng-click="cancel()">
+            Cancel
+        </md-button>
+    </md-dialog-actions>
+</md-dialog>

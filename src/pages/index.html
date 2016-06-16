@@ -67,12 +67,19 @@
                     </md-button>
                 </div>
             </md-toolbar>
-            <md-tabs id="mainContentTab" flex class="md-primary" layout-fill ng-cloak>
+            <md-tabs ng-show="tabs.length !== 0" id="mainContentTab" flex class="md-primary" layout-fill ng-cloak>
                 <md-tab flex layout="column" ng-repeat="tab in tabs" layout-fill label="{{tab.title}}">
                     <md-content flex layout="column" layout-fill ng-include="tab.partial" ng-controller="tab.controller">
                     </md-content>
                 </md-tab>
             </md-tabs>
+            <md-content layout="row" ng-show="tabs.length === 0" layout-align="center center" flex layout-fill ng-cloak>
+                <div id="noTappyHolder" layout="column" layout-align="center center" ng-click="requestRedetect()" >
+                    <!--<div class="md-display-2" style="opacity: 0.54">?</div>-->
+                    <div class="md-headline" style="opacity: 0.54; margin: 10px">No Tappy Connected</div>
+                    <div class="md-subhead" style="opacity:0.54; margin: 0px">Please plug in a Tappy and click here to connect</div>
+                </div>
+            </md-content>
         </md-content>
         <div id="statusBar">
         </div>

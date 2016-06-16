@@ -46,7 +46,7 @@ app.factory('TcmpTappyService',['$rootScope','ErrorDialogService','StatusBarServ
             scanActive = isScanning;
             if(!isScanning && tappy === null) {
                 StatusBarService.setStatus("No tappy found");
-                ErrorDialogService.noConnection();
+                //ErrorDialogService.noConnection();
             }
         });
     });

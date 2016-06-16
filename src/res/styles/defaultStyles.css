@@ -192,3 +192,9 @@ md-sidenav.small-nav {
 .italic {
     font-style: italic;
 }
+
+div#noTappyHolder {
+    cursor: pointer;
+    outline: none;
+    border: 0;
+}
