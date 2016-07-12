@@ -52,7 +52,7 @@ div#windowControls > button.btn-white-prominent > md-icon {
 }
 
 .tappy-icon-found > md-icon {
-    opacity: 0.76;
+    opacity: 1.0;
 }
 
 #statusBar {
