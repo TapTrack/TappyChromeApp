@@ -479,8 +479,20 @@ app.factory('TappyTcmpShim',[function() {
             success = success || function(){};
             fail = fail || function(){};
             
-            self.clearCallbacks();
-            fail(new StandardErrorMessage("This Tappy does not support this operation",true)); 
+            var lockMsg = new BasicNfc.Commands.LockTag(0x00);
+            var failCb = genFailCb(fail);
+            
+            var successCb = genSuccessCb(BasicNfc.Responses.TagLocked.isTypeOf,function(msg){
+                    var tagType = msg.getTagType(); 
+                    var tagCode = msg.getTagCode();
+                    success(tagType,tagCode);
+                    if(continuous) {
+                        self.executeDelayed(function() {
+                            self.lockTag(continuous,success,fail);
+                        });
+                    }
+            },failCb);
+            self.sendMsg(lockMsg,successCb,failCb);
         },
 
         configurePlatform: function(continuous,success,fail) {

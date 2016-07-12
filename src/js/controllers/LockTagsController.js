@@ -38,7 +38,7 @@ app.controller('LockTagsController',['$scope', 'ErrorDialogService','StatusBarSe
                                 StringUtils.uint8ArrayToHexString(tagCode),
                                 writeCount));
                     },
-                    ErrorDialogService.shimErrorDialogCb);
+                    ErrorDialogService.shimErrorResponseCb);
             
         }
     };

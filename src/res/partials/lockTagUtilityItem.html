@@ -10,13 +10,16 @@
                 irreversible operation that prevents the locked memory from ever being
                 rewritten, so it is advisable to make certain that any tags you lock
                 contain the information you desire. For more details on tag locking and 
-                NFC tag write protection in general, please read the TapTrack whitepaper
-                on <a href="http://www.taptrack.com/nfc-tag-write-protection/" target="_blank">NFC Tag Write Protection</a>. Additionally, once you issue this
+                NFC tag write protection in general, please read the 
+                <a href="http://www.taptrack.com/nfc-tag-write-protection/" target="_blank">NFC Tag Write Protection</a>
+                whitepaper. Additionally, once you issue this
                 command, the Tappy will immediately start locking all tags it encounters,
                 so make sure there are not any tags you do not want locked in proximity to
-                the Tappy before initiating batch locking. If you attempt to lock a tag
-                that is already locked, the Tappy will report success as the tag has been locked
-                even though it was already in this state.
+                the Tappy before initiating batch locking. Some tag technologies will allow
+                themselves to be 'locked' again when they are already locked, while others
+                will refuse to undergo locking a second time. Therefore, if you attempt to lock a tag
+                that is already locked, the Tappy will either report success or failure depending
+                on the type of tag that was presented.
             </div>
         </div>
         <div layout-padding layout="row">
