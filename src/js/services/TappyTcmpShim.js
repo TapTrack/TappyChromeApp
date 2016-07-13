@@ -498,7 +498,7 @@ app.factory('TappyTcmpShim',[function() {
         configurePlatform: function(continuous,success,fail) {
             var self = this;
             self.clearCallbacks();
-            lock = false;
+            var lock = false;
             continuous = continuous || false;
             success = success || function(){};
             fail = fail || function(){};
