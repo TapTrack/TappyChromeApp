@@ -79,13 +79,15 @@ app.factory('TappyTcmpShim',[function() {
 
     var System = TappySystemFamily;
     var BasicNfc = TappyBasicNfcFamily;
+    var Type4 = TappyType4Family;
 
     var TcmpShim = function(tappy) {
         var self = this;
         this.tappy = tappy;
         this.resolver = new ResolverMux(
                 [new TappyBasicNfcFamily.Resolver(),
-                new TappySystemFamily.Resolver()]);
+                new TappySystemFamily.Resolver(),
+                new TappyType4Family.Resolver()]);
 
         this.currentSuccessCb = function(){};
         this.currentFailCb = function(){};
@@ -138,9 +140,10 @@ app.factory('TappyTcmpShim',[function() {
                 fail(new StandardErrorMessage("Scan timeout",true));
             } else if (filter(msg)) {
                 success(msg);
-            } 
-            console.log("Message ignored");
-            console.log(msg);
+            } else {
+                console.log("Message ignored");
+                console.log(msg);
+            }
         };
     };
 
@@ -192,16 +195,29 @@ app.factory('TappyTcmpShim',[function() {
 
         detectNdef: function(continuous,success,fail) {
             var self = this;
+            self.detectNdefNocompat(continuous,false,success,fail);
+        },
+
+        detectNdefTypeOne: function(continuous, success, fail) {
+            var self = this;
+            self.detectNdefNocompat(continuous,true,success,fail);
+        },
+
+        detectNdefNocompat: function(continuous,typeOne,success,fail) {
+            var self = this;
             self.clearCallbacks();
             continuous = continuous || false;
+            typeOne = typeOne || false;
             success = success || function(){};
             fail = fail || function(){};
             
+            var pollingMode = typeOne ? BasicNfc.PollingModes.TYPE1 : BasicNfc.PollingModes.GENERAL; 
+
             var msg = null;
             if(continuous) {
-                msg = new BasicNfc.Commands.StreamNdef(0x00,BasicNfc.PollingModes.GENERAL);
+                msg = new BasicNfc.Commands.StreamNdef(0x00,pollingMode);
             } else {
-                msg = new BasicNfc.Commands.ScanNdef(0x00,BasicNfc.PollingModes.GENERAL);
+                msg = new BasicNfc.Commands.ScanNdef(0x00,pollingMode);
             }
             
             var failCb = genFailCb(fail);
@@ -223,16 +239,29 @@ app.factory('TappyTcmpShim',[function() {
 
         detectTag: function(continuous,success,fail) {
             var self = this;
+            self.detectTagNocompat(continuous,false,success,fail);
+        },
+
+        detectTagTypeOne: function (continuous, success, fail) {
+            var self = this;
+            self.detectTagNocompat(continuous,true,success,fail);
+        },
+        
+        detectTagNocompat: function (continuous, typeOne, success, fail) {
+            var self = this;
             self.clearCallbacks();
+            typeOne = typeOne || false;
             continuous = continuous || false;
             success = success || function(){};
             fail = fail || function(){};
             
+            var pollingMode = typeOne ? BasicNfc.PollingModes.TYPE1 : BasicNfc.PollingModes.GENERAL; 
+
             var msg = null;
             if(continuous) {
-                msg = new BasicNfc.Commands.StreamTags(0x00,BasicNfc.PollingModes.GENERAL);
+                msg = new BasicNfc.Commands.StreamTags(0x00,pollingMode);
             } else {
-                msg = new BasicNfc.Commands.ScanTag(0x00,BasicNfc.PollingModes.GENERAL);
+                msg = new BasicNfc.Commands.ScanTag(0x00,pollingMode);
             }
             
             var failCb = genFailCb(fail);
@@ -242,6 +271,7 @@ app.factory('TappyTcmpShim',[function() {
                     success(tagType,tagCode);
             },failCb);
             self.sendMsg(msg,successCb,failCb);
+
         },
 
         detectType4B: function(continuous,success,fail) {
@@ -251,8 +281,91 @@ app.factory('TappyTcmpShim',[function() {
             success = success || function(){};
             fail = fail || function(){};
             
+            var msg = new Type4.Commands.DetectType4B(0x00);
+            
+            var wrappedSuccess = function(atqb,attrib) {
+                success(atqb,attrib);
+                if(continuous) {
+                    self.executeDelayed(function() {
+                        self.detectType4B(continuous,success,fail);
+                    });
+                }
+            };
+
+            var failCb = genFailCb(fail);
+            var successCb = genSuccessCb(TappyType4Family.Responses.Type4BDetected.isTypeOf,function(msg){
+                    wrappedSuccess(msg.getAtqb(),msg.getAttrib());
+            },failCb);
+            self.sendMsg(msg,successCb,failCb);
+        },
+
+        getHardwareVersion: function(success, fail) {
+            var self = this;
             self.clearCallbacks();
-            fail(new StandardErrorMessage("This Tappy does not support this operation",true)); 
+            success = success || function(){};
+            fail = fail || function(){};
+            
+            var msg = new System.Commands.GetHardwareVersion();
+               
+            var failCb = genFailCb(fail);
+            var successCb = genSuccessCb(System.Responses.HardwareVersion.isTypeOf,function(msg){
+                success(msg.getMajorVersion(),msg.getMinorVersion());
+            },failCb);
+            self.sendMsg(msg,successCb,failCb);
+
+        },
+
+        getFirmwareVersion: function(success, fail) {
+            var self = this;
+            self.clearCallbacks();
+            success = success || function(){};
+            fail = fail || function(){};
+                
+            var msg = new System.Commands.GetFirmwareVersion();
+               
+            var failCb = genFailCb(fail);
+            var successCb = genSuccessCb(System.Responses.FirmwareVersion.isTypeOf,function(msg){
+                success(msg.getMajorVersion(),msg.getMinorVersion());
+            },failCb);
+            self.sendMsg(msg,successCb,failCb);
+        },
+       
+
+        setDualPolling: function(enabled,success,fail) {
+            var self = this;
+            enabled = enabled || false;
+            success = success || function(){};
+            fail = fail || function(){};
+
+            self.setConfigByteNocompat(0x01,(enabled ? 0x01 : 0x00),success,fail);
+        },
+        
+        setTypeTwoEnumeration: function(enabled,success,fail) {
+            var self = this;
+            enabled = enabled || false;
+            success = success || function(){};
+            fail = fail || function(){};
+
+            self.setConfigByteNocompat(0x03,(enabled ? 0x01 : 0x00),success,fail);
+        },
+
+        setConfigByteNocompat: function(parameter,value,success,fail) {
+            var self = this;
+            self.clearCallbacks();
+            if(typeof parameter === "undefined" || typeof value === "undefined") {
+                throw new Error("Must supply a parameter and value to set config byte");
+            } else {
+                success = success || function(){};
+                fail = fail || function(){};
+                
+                var msg = new System.Commands.SetConfigItem(parameter,value);
+               
+                var failCb = genFailCb(fail);
+                var successCb = genSuccessCb(System.Responses.ConfigItemSuccess.isTypeOf,function(msg){
+                    success();
+                },failCb);
+                self.sendMsg(msg,successCb,failCb);
+            }
         },
 
         writeUri: function(uri,lock,continuous,success,fail) {
@@ -442,6 +555,106 @@ app.factory('TappyTcmpShim',[function() {
             var msgBytes = msg.toByteArray();
 
             self.writeCustomNdef(msgBytes,lock,continuous,success,fail);
+        },
+
+        createUidMirrorTransformer: function(ndefBytes) {
+            var message = Ndef.Message.fromBytes(ndefBytes);
+            var records = message.getRecords();
+
+            var passthrough = function(record) {
+                return function() {
+                    return record;
+                };
+            };
+
+            // if this is slow with continuous operations we can technically cache this
+            var replaceUidText = function (uid, text) {
+                return text.replace(/\[uid\]/g,uid);
+            };
+
+            var textRecordCorrector = function(record) {
+                var contents = Ndef.Utils.resolveTextRecord(record);
+                return function(uid) {
+                    return Ndef.Utils.createTextRecord(replaceUidText(uid,contents.content),contents.language);
+                };
+            };
+
+            var urlRecordCorrector = function(record) {
+                var uri = Ndef.Utils.resolveUriRecordToString(record);
+                return function(uid) {
+                    return Ndef.Utils.createUriRecord(replaceUidText(uid,uri));
+                };
+            };
+
+            var recordMapper = function(ndefRecord) {
+                if(ndefRecord.getTnf() === Ndef.Record.TNF_WELL_KNOWN) {
+                    if(ndefRecord.getType()[0] === 0x54) {
+                        return textRecordCorrector(ndefRecord);
+                    } else if(ndefRecord.getType()[0] === 0x55) {
+                        return urlRecordCorrector(ndefRecord);
+                    } 
+                }
+
+                return passthrough(ndefRecord);
+            };
+        
+            var recordTransformer = records.map(recordMapper);
+            var messageGenerator = function(uid) {
+                var transformedRecords = recordTransformer
+                    .map(function(r){return r(uid);});
+                var msg = new Ndef.Message(transformedRecords);
+                return msg.toByteArray();
+            };
+            
+            return messageGenerator;
+        },
+
+        writeMirroredNdef: function(ndefBytes, lock, continuous, success, fail) {
+            var self = this;
+            var messageTransformer = self.createUidMirrorTransformer(ndefBytes);
+            lock = lock || false;
+            continuous = continuous || false;
+            success = success || function(){};
+            fail = fail || function(){};
+            
+            var execute = function() {
+                self.clearCallbacks();
+
+                var readMsg = new BasicNfc.Commands.ScanTag(0x00,BasicNfc.PollingModes.GENERAL);
+                
+                var readFailCb = genFailCb(fail);
+                var readSuccessCb = genSuccessCb(BasicNfc.Responses.TagFound.isTypeOf,function(msg){
+                    var tagType = msg.getTagType(); 
+                    var tagCode = msg.getTagCode();
+                    
+                    var hexTagcode = StringUtils.uint8ArrayToHexString(tagCode);
+                    
+                    var writeMsg = new BasicNfc.Commands.WriteNdefCustom(0,lock,messageTransformer(hexTagcode));
+                   
+                    var wrappedSuccess = function(tagType,tagCode) {
+                        success(tagType,tagCode);
+                        if(continuous) {
+                            self.executeDelayed(function() {
+                                // this is super inefficient, we'll have to see if it matters
+                                // self.writeMirroredNdef(ndefBytes,lock,continuous,success,fail);
+                                execute();
+                            });
+                        }
+                    };
+
+                    var writeFailCb = genFailCb(fail);
+                    var writeSuccessCb = genSuccessCb(BasicNfc.Responses.TagWritten.isTypeOf,function(msg){
+                            var tagType = msg.getTagType(); 
+                            var tagCode = msg.getTagCode();
+                            wrappedSuccess(tagType,tagCode);
+                    },writeFailCb);
+                    self.sendMsg(writeMsg,writeSuccessCb,writeFailCb);
+                },readFailCb);
+                
+                self.sendMsg(readMsg,readSuccessCb,readFailCb);
+            };
+
+            execute();
         },
 
         writeCustomNdef: function(ndef,lock,continuous,success,fail) {

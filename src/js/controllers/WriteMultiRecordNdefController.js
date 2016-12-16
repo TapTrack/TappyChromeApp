@@ -1,9 +1,12 @@
 app.controller('WriteMultiRecordNdefController',
-        ['$rootScope','$scope', 'ErrorDialogService','StatusBarService', 'WriteModeService','TappyService','MultiRecordNdefService','WriteMessageToasterService',
-        function($rootScope, $scope, ErrorDialogService, StatusBarService, WriteModeService, TappyService, MultiRecordNdefService, WriteMessageToasterService) {
+        ['$rootScope','$scope', 'ErrorDialogService','StatusBarService', 'WriteModeService','TappyService','MultiRecordNdefService','WriteMessageToasterService','TappyCapabilityService',
+        function($rootScope, $scope, ErrorDialogService, StatusBarService, WriteModeService, TappyService, MultiRecordNdefService, WriteMessageToasterService, TappyCapabilityService) {
     $scope.recordService = MultiRecordNdefService;
     $scope.ndefRecords = $scope.recordService.getRecords();
     $scope.ndefRevisionCount = $scope.recordService.changeCount;
+
+    $scope.supportsMirroredWrite = TappyCapabilityService.hasMirroredWrite();
+    $scope.mirrorWrite = false;
 
     $scope.getRecordService = function() {
         return $scope.recordService;
@@ -110,12 +113,21 @@ app.controller('WriteMultiRecordNdefController',
                     .createToaster(
                         $scope.selectedMode.locks,
                         $scope.selectedMode.continuous); 
-                tappy.writeCustomNdef(ndefMessage.toByteArray(),$scope.selectedMode.locks,$scope.selectedMode.continuous,
-                        function() {
-                            writeCount++;
-                            toaster(writeCount);
-                        },
-                        ErrorDialogService.shimErrorResponseCb);
+                if ($scope.mirrorWrite) {
+                    tappy.writeMirroredNdef(ndefMessage.toByteArray(),$scope.selectedMode.locks,$scope.selectedMode.continuous,
+                            function() {
+                                writeCount++;
+                                toaster(writeCount);
+                            },
+                            ErrorDialogService.shimErrorResponseCb);
+                } else {
+                    tappy.writeCustomNdef(ndefMessage.toByteArray(),$scope.selectedMode.locks,$scope.selectedMode.continuous,
+                            function() {
+                                writeCount++;
+                                toaster(writeCount);
+                            },
+                            ErrorDialogService.shimErrorResponseCb);
+                }
             }
 
         }

@@ -35,7 +35,8 @@
     "tappy-chromeserialcommunicator": "~1.0.0",
     "tappy-tcmpchromeserialautodetector": "~1.0.0",
     "tappy-systemfamily": "~1.0.0",
-    "tappy-basicnfcfamily": "~1.1.0"
+    "tappy-basicnfcfamily": "~1.1.0",
+    "tappy-type4family": "~1.0.0"
   },
   "overrides": {
     "angular": {
@@ -45,6 +46,6 @@
     }
   },
   "resolutions": {
-    "angular": "1.5.7"
+    "angular": "1.5.9"
   }
 }

@@ -101,6 +101,10 @@ app.factory('TappyClassicShim',[function() {
             self.setCommand(cmd,continuous);
         },
 
+        detectNdefTypeOne: function (continuous, success, fail) {
+            throw new Error("Classic doesn't support this operation");
+        },
+
         detectTag: function(continuous,success,fail) {
             var self = this;
             continuous = continuous || false;
@@ -116,6 +120,10 @@ app.factory('TappyClassicShim',[function() {
             self.setCommand(cmd,continuous);
         },
 
+        detectTagTypeOne: function (continuous, success, fail) {
+            throw new Error("Classic doesn't support this operation");
+        },
+
         detectType4B: function(continuous,success,fail) {
             var self = this;
             continuous = continuous || false;
@@ -129,6 +137,26 @@ app.factory('TappyClassicShim',[function() {
                 },generateStdErrorCb(fail,e));
             };
             self.setCommand(cmd,continuous);
+        },
+
+        getHardwareVersion: function(success, fail) {
+            throw new Error("Classic protocol doesn't support this operation");
+        },
+
+        getFirmwareVersiom: function(success, fail) {
+            throw new Error("Classic protocol doesn't support this operation");
+        },
+        
+        setDualPolling: function(enabled,success,fail) {
+            throw new Error("Classic protocol doesn't support this operation");
+        },
+        
+        setTypeTwoEnumeration: function(enabled,success,fail) {
+            throw new Error("Classic protocol doesn't support this operation");
+        },
+
+        writeMirroredNdef: function(ndefBytes, lock, continuous, success, fail) {
+            throw new Error("Classic protocol doesn't support this operation");
         },
 
         writeUri: function(uri,lock,continuous,success,fail) {

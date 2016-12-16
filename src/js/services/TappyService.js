@@ -7,9 +7,14 @@ app.factory('TappyService',['$rootScope','$mdDialog','WriteMessageToasterService
     var classicScanActive = false;
     var tcmpScanActive = false;
 
+    var hasPlatformInfo = false;
+    var isMac = false;
+    var startScanOnPlatformReturn = false;
+
     var tcmpDevices = [];
     var classicDevices = [];
-    
+   
+
     var setTappyConnectionStatus = function(newStatus) {
         $rootScope.$evalAsync(function(){
             tappyConnected = newStatus;   
@@ -107,7 +112,7 @@ app.factory('TappyService',['$rootScope','$mdDialog','WriteMessageToasterService
     };
     
     // for some reason this needs to be very long on initial startup
-    var tcmpDetector= new TappyChromeSerialAutodetector({waitTimeout: 350});
+    var tcmpDetector= new TappyChromeSerialAutodetector({waitTimeout: 450});
     tcmpDetector.setCallback(function(device) {
         tcmpDevices.push(device);
     });
@@ -138,12 +143,32 @@ app.factory('TappyService',['$rootScope','$mdDialog','WriteMessageToasterService
     });
 
     var startCombinedScan = function() {
-        continueScanning = true;
-        classicDetector.startScan();
+        if(hasPlatformInfo) {
+            // Some macOS computers seem to have problems
+            // when the TCMP scan is preceeded by the Classic
+            // scan, but the exact cause of this is unknown.
+            // For now, we just avoid the Classic scan in order
+            // to allow those computers to still use this utility. 
+            //
+            // Note: Restarting auto-detection fails on those
+            // devices as well
+            if(isMac) {
+                continueScanning = true;
+                startScanOnPlatformReturn = false;
+                tcmpDetector.scan();
+            } else {
+                continueScanning = true;
+                startScanOnPlatformReturn = false;
+                classicDetector.startScan();
+            }
+        } else {
+            startScanOnPlatformReturn = true;
+        }
     };
 
     var stopCombinedScan = function() {
         continueScanning = false;
+        startScanOnPlatformReturn = false;
         classicDetector.cancelScan();
         tcmpDetector.stop();
     };
@@ -193,5 +218,12 @@ app.factory('TappyService',['$rootScope','$mdDialog','WriteMessageToasterService
         setTappyConnectionStatus(false);
     };
 
+    chrome.runtime.getPlatformInfo(function(platformInfo) {
+        isMac = platformInfo.os == "linux";
+        hasPlatformInfo = true;
+        if(startScanOnPlatformReturn) {
+            service.startScan();
+        }
+    });
     return service;
 }]);

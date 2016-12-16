@@ -1,0 +1,30 @@
+<div layout="row" flex ng-controller="GetTappyVersionController">
+    <div flex >
+        <div  layout-padding  layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Get Tappy Version
+            </div>
+            <div layout-padding class="md-subhead">
+                This utility will query the attached Tappy to determine what version its
+                hardware and firmware are.
+            </div>
+        </div>
+        <div layout="row" >
+            <div layout-padding layout="column" ng-hide="hardwareVersion == null" >
+                <label style="padding-bottom:0">Hardware Version</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="hardwareVersion"></span>
+                <label style="padding-bottom:0">Firmware Version</label>
+                <span class="md-subhead" style="padding-top: 2px" ng-bind="firmwareVersion"></span>
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <div>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="clearInformation()" ng-hide="hardwareVersion == null">Clear</md-button>
+                <md-button class="md-raised md-primary" ng-click="initiateOperation()" >Get Version</md-button>
+            </div>
+        </div>
+    </div>
+</div>

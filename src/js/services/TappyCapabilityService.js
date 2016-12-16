@@ -24,7 +24,9 @@ app.factory('TappyCapabilityService',['TappyService',function(TappyService) {
     //tcmp doesnt have a generic lock function
     tcUtilityTabs.push(new SideTab('/res/img/svg/ic_open_in_browser.svg','Launch URLs','/res/partials/openUrlUtilityItem.html',false));
     tcUtilityTabs.push(new SideTab('/res/img/svg/ic_lock.svg','Lock tags','/res/partials/lockTagUtilityItem.html',false));
-    tcUtilityTabs.push(new SideTab('/res/img/svg/ic_cloud_upload.svg','Configure for TapTrack Platform','/res/partials/platformUploadUtilityItem.html',false));
+    tcUtilityTabs.push(new SideTab('/res/img/svg/ic_cloud_upload.svg','Encode for TapTrack Platform','/res/partials/platformUploadUtilityItem.html',false));
+    tcUtilityTabs.push(new SideTab('/res/img/svg/ic_language.svg','Get Tappy Version','/res/partials/getVersionUtilityItem.html',false));
+    tcUtilityTabs.push(new SideTab('/res/img/svg/ic_settings_applications.svg','Configure Tappy Settings','/res/partials/setConfigUtilityItem.html',false));
     
     var writeTabs = [];
     writeTabs.push(new SideTab('/res/img/svg/ic_link.svg','Single URI record','/res/partials/writeUri.html',false));
@@ -40,6 +42,7 @@ app.factory('TappyCapabilityService',['TappyService',function(TappyService) {
     var tcDetectTabs = [];
     tcDetectTabs.push(new SideTab('/res/img/svg/ic_nmark_optimised.svg','Read NDEF tag','/res/partials/readNdef.html',false));
     tcDetectTabs.push(new SideTab('/res/img/svg/ic_nfc.svg','Detect tag','/res/partials/scanTag.html',false));
+    tcDetectTabs.push(new SideTab('/res/img/svg/ic_typeb_opt.svg','Detect Type 4B tag','/res/partials/scanType4.html',true));
     
     return {
         getMainCategories: function() {
@@ -73,6 +76,12 @@ app.factory('TappyCapabilityService',['TappyService',function(TappyService) {
             } else {
                 return [];
             }
+        },
+        hasTypeOneScan: function() {
+            return TappyService.getTappyType() === "tcmp";
+        },
+        hasMirroredWrite: function() {
+            return TappyService.getTappyType() === "tcmp";
         }
     };
 

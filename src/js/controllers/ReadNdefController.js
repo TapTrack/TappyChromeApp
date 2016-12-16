@@ -1,12 +1,12 @@
 app.controller('ReadNdefController',
-        ['$rootScope','$scope','$sanitize','ErrorDialogService','StatusBarService','TappyService', 
-        function($rootScope, $scope, $sanitize, ErrorDialogService, StatusBarService,TappyService) {
+        ['$rootScope','$scope','$sanitize','ErrorDialogService','StatusBarService','TappyService','TappyCapabilityService', 
+        function($rootScope, $scope, $sanitize, ErrorDialogService, StatusBarService,TappyService,TappyCapabilityService) {
     var CardData = function(uid,description,ndef) {
         this.uid = uid;
         this.description = description;
         this.ndefRecords = ndef;
     };
-   
+    
     var SpoofRecord = function(tnf,type,payload) {
         this.getTnf = function() {
             return tnf;
@@ -20,6 +20,8 @@ app.controller('ReadNdefController',
             return payload;
         };
     };
+    
+    $scope.supportsTypeOne = TappyCapabilityService.hasTypeOneScan();
 
     $scope.cardData = null;
     
@@ -65,6 +67,31 @@ app.controller('ReadNdefController',
         }
         
         $scope.cardData = new CardData("11223344556677","NTAG203",spoofRecords);
+    };
+
+    $scope.scanForNdefTypeOne = function () {
+        var tappy = TappyService.getTappy();
+        if(tappy === null || !tappy.isConnected()) {
+            ErrorDialogService.noConnection();
+        }
+        else {
+            StatusBarService.setStatus("Waiting for tap...");
+            tappy.detectNdefTypeOne(false,function(tagType,tagCode, ndefMessage) {
+                StatusBarService.setTransientStatus("Tag read");
+                $scope.$evalAsync(function(){
+                    $scope.cardData = new CardData(
+                        StringUtils.uint8ArrayToHexString(tagCode),
+                        TappyClassic.Utils.resolveTagTypeDescription(tagType),
+                        ndefMessage.getRecords());
+                });
+            },function(err) {
+                $scope.$evalAsync(function(){
+                    $scope.clearCardData();
+                });
+                ErrorDialogService.shimErrorResponseCb(err);
+            });
+        }
+
     };
 
     $scope.scanForNdef = function() {

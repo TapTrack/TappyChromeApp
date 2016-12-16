@@ -1,0 +1,48 @@
+<div layout="row" flex ng-controller="SetConfigUtilityController">
+    <div flex >
+        <div  layout-padding  layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Type 2 Enumeration
+            </div>
+            <div layout-padding class="md-subhead">
+                The Tappy is capable of heuristically narrowing down the specifications of
+                Type 2 tags it encounters. However, by default, this feature is disabled
+                as it reduces scan performance by increasing the number of operations the
+                Tappy has to perform before reporting the scan. You may enable this feature
+                here if you wish. 
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <div>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="disableType2Enum()" >Disable</md-button>
+                <md-button class="md-raised md-primary" ng-click="enableType2Enum()" >Enable</md-button>
+            </div>
+        </div>
+        <div  layout-padding  layout="column">
+            <div layout="row" layout-padding class="md-light-head">
+                Dual-mode Detection on Write
+            </div>
+            <div layout-padding class="md-subhead">
+                Detecting Type 1 (Topaz/Jewel) tags requires a different scanning procedure
+                than detecting other types of tags. If you wish to write to type 1 tags, you
+                will need to enable dual-mode detection so that the Tappy knows to switch
+                between the two different scanning procedures when searching for a tag to write
+                to. Enabling this feature does slightly degrade scan performance so it is off
+                by default. Your Tappy has to be running firmware version 0.51 or greater to use
+                this feature.
+            </div>
+        </div>
+        <div layout-padding layout="row">
+            <div>
+            </div>
+            <span flex></span>
+            <div>
+                <md-button class="" ng-click="disableDualPolling()" >Disable</md-button>
+                <md-button class="md-raised md-primary" ng-click="enableDualPolling()" >Enable</md-button>
+            </div>
+        </div>
+    </div>
+</div>

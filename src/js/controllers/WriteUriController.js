@@ -1,7 +1,10 @@
-app.controller('WriteUriController',['$rootScope','$scope', '$mdDialog','ErrorDialogService','StatusBarService','WriteModeService','TappyService','WriteMessageToasterService',
-        function($rootScope, $scope, $mdDialog, ErrorDialogService, StatusBarService, WriteModeService,TappyService, WriteMessageToasterService) {
+app.controller('WriteUriController',['$rootScope','$scope', '$mdDialog','ErrorDialogService','StatusBarService','WriteModeService','TappyService','WriteMessageToasterService','TappyCapabilityService',
+        function($rootScope, $scope, $mdDialog, ErrorDialogService, StatusBarService, WriteModeService,TappyService, WriteMessageToasterService, TappyCapabilityService) {
     
     $scope.ndefRecord = Ndef.Utils.createUriRecord("http://");
+
+    $scope.supportsMirroredWrite = TappyCapabilityService.hasMirroredWrite();
+    $scope.mirrorWrite = false;
 
     var uriSlot = 2;
     
@@ -47,29 +50,44 @@ app.controller('WriteUriController',['$rootScope','$scope', '$mdDialog','ErrorDi
             ErrorDialogService.noConnection();
         }
         else {
-            // this is kind of inefficient,
-            // but it lets us use the addContent/writeContent
-            // flow instead of the newer writeNdef, which isn't
-            // supported by older tappies
-            var fullUri = Ndef.Utils.resolveUriRecordToString($scope.ndefRecord);
-
             var toaster = WriteMessageToasterService
                 .createToaster(
                     $scope.selectedMode.locks,
                     $scope.selectedMode.continuous); 
-            StatusBarService.setStatus("Waiting for tap...");
-            tappy.writeUri(
-                    fullUri,
-                    $scope.selectedMode.locks,
-                    $scope.selectedMode.continuous,
-                    function() {
-                        writeCount++;
-                        toaster(writeCount);
-                        StatusBarService.setTransientStatus("Tag Written");
-                    },function(err) {
-                        tappy.stop();
-                        ErrorDialogService.shimErrorResponseCb(err);
-                    });
+            if($scope.mirrorWrite) {
+                var msg = new Ndef.Message([$scope.ndefRecord]);
+                StatusBarService.setStatus("Waiting for tap...");
+                
+                tappy.writeMirroredNdef(msg.toByteArray(),$scope.selectedMode.locks,$scope.selectedMode.continuous,
+                        function() {
+                            writeCount++;
+                            toaster(writeCount);
+                            StatusBarService.setTransientStatus("Tag Written");
+                        },function(err) {
+                            tappy.stop();
+                            ErrorDialogService.shimErrorResponseCb(err);
+                        });
+            } else {
+                // this is kind of inefficient,
+                // but it lets us use the addContent/writeContent
+                // flow instead of the newer writeNdef, which isn't
+                // supported by older tappies
+                var fullUri = Ndef.Utils.resolveUriRecordToString($scope.ndefRecord);
+
+                StatusBarService.setStatus("Waiting for tap...");
+                tappy.writeUri(
+                        fullUri,
+                        $scope.selectedMode.locks,
+                        $scope.selectedMode.continuous,
+                        function() {
+                            writeCount++;
+                            toaster(writeCount);
+                            StatusBarService.setTransientStatus("Tag Written");
+                        },function(err) {
+                            tappy.stop();
+                            ErrorDialogService.shimErrorResponseCb(err);
+                        });
+            }
         }
     };
 

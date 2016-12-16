@@ -15,6 +15,13 @@
                 Additionally, for security reasons, some advanced tags can be configured to report 
                 a dynamic UID, in which case the UID detected will change with every scan.
             </div>
+            <div layout="row" ng-show="supportsTypeOne" layout-padding class="md-subhead">
+                If you wish to scan for Type 1 (aka Jewel/Topaz) tags, you will have to use the "Scan Type 1" button
+                as this tag technology requires a different detection procedure than other tag
+                technologies. If you wish to write to Type 1 tags, you will have to enable dual-mode
+                detection in the Tappy setting configuration section under utilities. For other tag
+                technologies, you can use the "Scan General" button.
+            </div>
         </div>
         <div layout="row" ng-hide="cardData === null">
             <div layout-padding layout="column">
@@ -31,7 +38,9 @@
             <span flex></span>
             <div>
                 <md-button class="" ng-click="clearCardData()" ng-hide="cardData === null">Clear</md-button>
-                <md-button class="md-raised md-primary" ng-click="scanForTags()" >Detect</md-button>
+                <md-button class="md-primary" ng-show="supportsTypeOne" ng-click="scanForTagsTypeOne()" >Scan Type 1</md-button>
+                <md-button class="md-raised md-primary" ng-show="supportsTypeOne" ng-click="scanForTags()" >Scan General</md-button>
+                <md-button class="md-raised md-primary" ng-hide="supportsTypeOne" ng-click="scanForTags()" >Scan</md-button>
             </div>
         </div>
     </div>

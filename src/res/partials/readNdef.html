@@ -4,12 +4,20 @@
             <div layout="row" layout-padding class="md-light-head">
                 Detect NDEF
             </div>
-            <div layout="row" layout-padding class="md-subhead">
+            <div layout="column" layout-padding class="md-subhead">
                 A special space-efficient format is called the NFC Data Exchange Format (NDEF)
                 is commonly used to store data on NFC tags in a manner that allows NFC
                 readers to make sense of the tag contents. If a tag has been formatted 
                 to store NDEF data in a standards-compliant fashion, this operation can be used
                 to retrieve that information, as well as some information about the tag itself.
+            </div>
+            <div ng-show="supportsTypeOne" layout="column" layout-padding class="md-subhead">
+                If you wish to scan for Type 1 (aka Jewel/Topaz) tags, you will have to use the "Scan Type 1" button
+                as this tag technology requires a different detection procedure than other tag
+                technologies. If you wish to write to Type 1 tags, you will have to enable dual-mode
+                detection in the Tappy setting configuration section under utilities. For other tag
+                technologies, you can use the "Scan General" button. Your Tappy's firmware version
+                must be greater than 0.51 to use this feature.
             </div>
         </div>
         <div  layout="column" ng-hide="cardData === null">
@@ -48,7 +56,9 @@
             <span flex></span>
             <div>
                 <md-button class="" ng-click="clearCardData()" ng-hide="cardData === null" >Clear</md-button>
-                <md-button class="md-raised md-primary" ng-click="scanForNdef()" >Detect</md-button>
+                <md-button class="md-primary" ng-show="supportsTypeOne" ng-click="scanForNdefTypeOne()" >Scan Type 1</md-button>
+                <md-button class="md-raised md-primary" ng-show="supportsTypeOne" ng-click="scanForNdef()" >Scan General</md-button>
+                <md-button class="md-raised md-primary" ng-hide="supportsTypeOne" ng-click="scanForNdef()" >Scan</md-button>
             </div>
         </div>
     </div>
