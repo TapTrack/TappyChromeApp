@@ -337,7 +337,7 @@ app.factory('TappyTcmpShim',[function() {
             success = success || function(){};
             fail = fail || function(){};
 
-            self.setConfigByteNocompat(0x01,(enabled ? 0x01 : 0x00),success,fail);
+            self.setConfigByteNocompat(0x03,(enabled ? 0x01 : 0x00),success,fail);
         },
         
         setTypeTwoEnumeration: function(enabled,success,fail) {
@@ -346,7 +346,7 @@ app.factory('TappyTcmpShim',[function() {
             success = success || function(){};
             fail = fail || function(){};
 
-            self.setConfigByteNocompat(0x03,(enabled ? 0x01 : 0x00),success,fail);
+            self.setConfigByteNocompat(0x01,(enabled ? 0x01 : 0x00),success,fail);
         },
 
         setConfigByteNocompat: function(parameter,value,success,fail) {
