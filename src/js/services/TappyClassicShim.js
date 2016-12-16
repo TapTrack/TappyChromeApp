@@ -158,6 +158,10 @@ app.factory('TappyClassicShim',[function() {
         writeMirroredNdef: function(ndefBytes, lock, continuous, success, fail) {
             throw new Error("Classic protocol doesn't support this operation");
         },
+        
+        emulateNdef: function(ndef, timeout, maxScans, success, fail) {
+            throw new Error("Classic protocol doesn't support this operation");
+        },
 
         writeUri: function(uri,lock,continuous,success,fail) {
             var self = this;

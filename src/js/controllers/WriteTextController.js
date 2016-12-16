@@ -5,6 +5,7 @@ app.controller('WriteTextController',['$rootScope','$scope', 'ErrorDialogService
     $scope.selectedMode = WriteModeService.getDefaultMode();
     $scope.writeModes = WriteModeService.getModes();
 
+    $scope.supportsEmulation = TappyCapabilityService.supportsEmulation();
     $scope.supportsMirroredWrite = TappyCapabilityService.hasMirroredWrite();
     $scope.mirrorWrite = false;
     
@@ -29,6 +30,29 @@ app.controller('WriteTextController',['$rootScope','$scope', 'ErrorDialogService
     $scope.initiateWrite = function() {
         writeCount = 0;
         $scope.sendWrite();
+    };
+
+    $scope.requestEmulate = function() {
+        var tappy = TappyService.getTappy();
+
+        if(tappy === null || !tappy.isConnected()) {
+            ErrorDialogService.noConnection();
+        }
+        else {
+            var content = "";
+            if(typeof $scope.writeTextContent !== "undefined") {
+                content = $scope.writeTextContent.trim();
+            }
+            var msg = new Ndef.Message([Ndef.Utils.createTextRecord(content)]);
+            StatusBarService.setTransientStatus("Starting emulation");
+            tappy.emulateNdef(msg.toByteArray(),function() {
+                WriteMessageToasterService.customToast("Emulated Tag Scanned");
+            },function(err) {
+                tappy.stop();
+                ErrorDialogService.shimErrorResponseCb(err);
+            });
+        }
+
     };
 
     $scope.sendWrite = function() {

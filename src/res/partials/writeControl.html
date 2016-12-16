@@ -1,7 +1,8 @@
 <!-- TODO: change this into a directive -->
             <div layout="row" class="write-control-row">
                 <span flex></span>
-                <md-button class="stop-control" ng-show="selectedMode.continuous" ng-click="requestStop()">Stop</md-button>
+                <md-button class="stop-control" ng-click="requestStop()">Stop</md-button>
+                <md-button class="emulate-control md-primary" ng-show="supportsEmulation" ng-click="requestEmulate()">Emulate</md-button>
                 <md-button class="md-raised write-control" ng-class="{'md-primary': (!selectedMode.locks), 'md-warn': (selectedMode.locks)}" ng-click="initiateWrite()">
                     <span class="write-mode-description" style="">
                         {{ selectedMode.description }}

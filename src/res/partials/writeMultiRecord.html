@@ -15,6 +15,7 @@
                 record on the tag is a URL, the user's browser will open and the rest of the contents
                 will be ignored.
             </div>
+            <ng-include ng-show="supportsEmulation" src="'/res/partials/emulationExplanation.html'" />
             <ng-include ng-show="supportsMirroredWrite" src="'/res/partials/mirroredWrite.html'" />
             <md-switch ng-show="supportsMirroredWrite" ng-model="mirrorWrite">UID Mirroring</md-switch>
         </div>

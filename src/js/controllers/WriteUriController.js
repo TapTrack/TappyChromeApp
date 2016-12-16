@@ -3,6 +3,7 @@ app.controller('WriteUriController',['$rootScope','$scope', '$mdDialog','ErrorDi
     
     $scope.ndefRecord = Ndef.Utils.createUriRecord("http://");
 
+    $scope.supportsEmulation = TappyCapabilityService.supportsEmulation();
     $scope.supportsMirroredWrite = TappyCapabilityService.hasMirroredWrite();
     $scope.mirrorWrite = false;
 
@@ -41,6 +42,25 @@ app.controller('WriteUriController',['$rootScope','$scope', '$mdDialog','ErrorDi
     $scope.initiateWrite = function() {
         writeCount = 0;
         $scope.sendWrite();
+    };
+
+    $scope.requestEmulate = function() {
+        var tappy = TappyService.getTappy();
+
+        if(tappy === null || !tappy.isConnected()) {
+            ErrorDialogService.noConnection();
+        }
+        else {
+            var msg = new Ndef.Message([$scope.ndefRecord]);
+            StatusBarService.setTransientStatus("Starting emulation");
+            tappy.emulateNdef(msg.toByteArray(),function() {
+                WriteMessageToasterService.customToast("Emulated Tag Scanned");
+            },function(err) {
+                tappy.stop();
+                ErrorDialogService.shimErrorResponseCb(err);
+            });
+        }
+
     };
 
     $scope.sendWrite = function() {

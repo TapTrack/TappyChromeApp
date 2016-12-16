@@ -348,6 +348,21 @@ app.factory('TappyTcmpShim',[function() {
 
             self.setConfigByteNocompat(0x01,(enabled ? 0x01 : 0x00),success,fail);
         },
+        
+        emulateNdef: function(ndef, success, fail) {
+            var self = this;
+            self.clearCallbacks();
+            success = success || function(){};
+            fail = fail || function(){};
+            
+            var msg = new BasicNfc.Commands.EmulateNdefCustom(0, 0, ndef);
+            
+            var failCb = genFailCb(fail);
+            var successCb = genSuccessCb(BasicNfc.Responses.EmulationScanSuccess.isTypeOf,function(msg){
+                success();
+            },failCb);
+            self.sendMsg(msg,successCb,failCb);
+        },
 
         setConfigByteNocompat: function(parameter,value,success,fail) {
             var self = this;
@@ -439,14 +454,8 @@ app.factory('TappyTcmpShim',[function() {
             this.url = "";
         };
 */
-        writeVcard: function(vcard,lock,continuous,success,fail) {
-            var self = this;
-            self.clearCallbacks();
-            lock = lock || false;
-            continuous = continuous || false;
-            success = success || function(){};
-            fail = fail || function(){};
-            
+
+        composeVcardRecord: function(vcard) {
             var emptyVcard = new TappyClassic.TappyVcard();
             var finalVcard = vcard || {};
             for (var opt in emptyVcard) {
@@ -551,6 +560,19 @@ app.factory('TappyTcmpShim',[function() {
             var vcardBytes = StringUtils.stringToUint8Array(stringVcard);
             var typeBytes = StringUtils.stringToUint8Array("text/x-vcard");
             var record = new Ndef.Record(false,Ndef.Record.TNF_MEDIA,typeBytes,null,vcardBytes);
+            return record;
+        },
+
+        writeVcard: function(vcard,lock,continuous,success,fail) {
+            var self = this;
+            self.clearCallbacks();
+            lock = lock || false;
+            continuous = continuous || false;
+            success = success || function(){};
+            fail = fail || function(){};
+
+            var record = self.composeVcardRecord(vcard);
+            
             var msg = new Ndef.Message([record]);
             var msgBytes = msg.toByteArray();
 

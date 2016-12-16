@@ -82,6 +82,9 @@ app.factory('TappyCapabilityService',['TappyService',function(TappyService) {
         },
         hasMirroredWrite: function() {
             return TappyService.getTappyType() === "tcmp";
+        },
+        supportsEmulation: function() {
+            return TappyService.getTappyType() === "tcmp";
         }
     };
 

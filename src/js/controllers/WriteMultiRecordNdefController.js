@@ -5,6 +5,7 @@ app.controller('WriteMultiRecordNdefController',
     $scope.ndefRecords = $scope.recordService.getRecords();
     $scope.ndefRevisionCount = $scope.recordService.changeCount;
 
+    $scope.supportsEmulation = TappyCapabilityService.supportsEmulation();
     $scope.supportsMirroredWrite = TappyCapabilityService.hasMirroredWrite();
     $scope.mirrorWrite = false;
 
@@ -90,6 +91,35 @@ app.controller('WriteMultiRecordNdefController',
     $scope.initiateWrite = function() {
         writeCount = 0;
         $scope.sendWrite();
+    };
+
+    $scope.requestEmulate = function() {
+        var tappy = TappyService.getTappy();
+
+        if(tappy === null || !tappy.isConnected()) {
+            ErrorDialogService.noConnection();
+        }
+        else {
+            var records = $scope.recordService.getRecords();
+            if(records.length === 0) {
+                $mdDialog.show($mdDialog.alert()
+                        .clickOutsideToClose(true)
+                        .title("Error")
+                        .textContent("You cannot emulate an empty NDEF message")
+                        .ok('Ok'));
+            }
+            else {
+                var msg = new Ndef.Message(records);
+                StatusBarService.setTransientStatus("Starting emulation");
+                tappy.emulateNdef(msg.toByteArray(),function() {
+                    WriteMessageToasterService.customToast("Emulated Tag Scanned");
+                },function(err) {
+                    tappy.stop();
+                    ErrorDialogService.shimErrorResponseCb(err);
+                });
+            }
+        }
+
     };
 
     $scope.sendWrite = function() {

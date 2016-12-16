@@ -14,6 +14,7 @@
                 telephone numbers (tel:), sms text messagest (sms:), or even custom URIs
                 unique to certain apps.
             </div>
+            <ng-include ng-show="supportsEmulation" src="'/res/partials/emulationExplanation.html'" />
             <ng-include ng-show="supportsMirroredWrite" src="'/res/partials/mirroredWrite.html'" />
             <md-switch ng-show="supportsMirroredWrite" ng-model="mirrorWrite">UID Mirroring</md-switch>
         </div>
