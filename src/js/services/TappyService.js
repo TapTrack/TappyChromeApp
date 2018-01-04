@@ -112,7 +112,7 @@ app.factory('TappyService',['$rootScope','$mdDialog','WriteMessageToasterService
     };
     
     // for some reason this needs to be very long on initial startup
-    var tcmpDetector= new TappyChromeSerialAutodetector({waitTimeout: 450});
+    var tcmpDetector= new TappyChromeSerialAutodetector({waitTimeout: 1500});
     tcmpDetector.setCallback(function(device) {
         tcmpDevices.push(device);
     });
