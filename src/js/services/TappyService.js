@@ -112,7 +112,7 @@ app.factory('TappyService',['$rootScope','$mdDialog','WriteMessageToasterService
     };
     
     // for some reason this needs to be very long on initial startup
-    var tcmpDetector= new TappyChromeSerialAutodetector({waitTimeout: 1500});
+    var tcmpDetector= new TappyChromeSerialAutodetector({waitTimeout: 750});
     tcmpDetector.setCallback(function(device) {
         tcmpDevices.push(device);
     });
@@ -152,15 +152,20 @@ app.factory('TappyService',['$rootScope','$mdDialog','WriteMessageToasterService
             //
             // Note: Restarting auto-detection fails on those
             // devices as well
-            if(isMac) {
-                continueScanning = true;
-                startScanOnPlatformReturn = false;
-                tcmpDetector.scan();
-            } else {
-                continueScanning = true;
-                startScanOnPlatformReturn = false;
-                classicDetector.startScan();
-            }
+            //
+            // Additional Note: This behaviour is now being used for all devices
+            continueScanning = true;
+            startScanOnPlatformReturn = false;
+            tcmpDetector.scan();
+            // if(isMac) {
+            //     continueScanning = true;
+            //     startScanOnPlatformReturn = false;
+            //     tcmpDetector.scan();
+            // } else {
+            //     continueScanning = true;
+            //     startScanOnPlatformReturn = false;
+            //     classicDetector.startScan();
+            // }
         } else {
             startScanOnPlatformReturn = true;
         }
