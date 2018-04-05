@@ -33,7 +33,7 @@
     "tappy-classic": "~1.0.1",
     "tappy-tcmp": "~1.0.0",
     "tappy-chromeserialcommunicator": "~1.0.0",
-    "tappy-tcmpchromeserialautodetector": "~1.0.0",
+    "tappy-tcmpchromeserialautodetector": "~1.1.0",
     "tappy-systemfamily": "~1.0.0",
     "tappy-basicnfcfamily": "~1.2.0",
     "tappy-type4family": "~1.0.0"
